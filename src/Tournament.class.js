@@ -5,6 +5,7 @@ Sample tournament object (in yaml)
     description: "Benelux round A"
     startDate: "2024-04-01"
     pitches: ["Pitch 5", "Pitch 11", "Pitch 12", "Pitch 13"] 
+    cups: // tbd
     categories:
     Mens:
         g1: ["Amsterdam A", "Groningen", "Leuven A", "Hamburg/Bel'B'", "Eindhoven"]

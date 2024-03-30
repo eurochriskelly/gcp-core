@@ -7,29 +7,56 @@ module.exports = {
       pitches: ["Pitch 5", "Pitch 11", "Pitch 12", "Pitch 13"],
       categories: {
         Mens: {
-          g1: [
-            "Amsterdam A",
-            "Groningen",
-            "Leuven A",
-            "Hamburg/Bel'B'",
-            "Eindhoven",
+          groups: [
+            [
+              "Amsterdam A",
+              "Groningen",
+              "Leuven A",
+              "Hamburg/Bel'B'",
+              "Eindhoven",
+            ],
+            ["Luxembourg A", "Nijmegen", "Hague A", "Dusseldorf/Cologne"],
+            ["Belgium A", "Leuven B", "Maastricht", "Frankfurt"],
           ],
-          g2: ["Luxembourg A", "Nijmegen", "Hague A", "Dusseldorf/Cologne"],
-          g3: ["Belgium A", "Leuven B", "Maastricht", "Frankfurt"],
+          knockouts: {
+            rules: {
+              divisionOrder: ['cup', 'shield', 'plate'],
+              selection: 
+            },
+            divisions: {
+              cup: 4,
+              shield: 4,
+              plate: 5,
+            },
+          ],
         },
         Ladies: {
-          g1: [
-            "Leuven A",
-            "A'dam'B'/Leuven'B'",
-            "Belgium A",
-            "Groningen",
-            "Nijmegen",
+          groups: [
+            [
+              "Leuven A",
+              "A'dam'B'/Leuven'B'",
+              "Belgium A",
+              "Groningen",
+              "Nijmegen",
+            ],
+            [
+              "Luxembourg A",
+              "Hague/Frankfurt",
+              "Hamb/Duss/Lux'B'",
+              "Amsterdam A",
+            ],
           ],
-          g2: [
-            "Luxembourg A",
-            "Hague/Frankfurt",
-            "Hamb/Duss/Lux'B'",
-            "Amsterdam A",
+          knockouts: [
+            {
+              division: "cup",
+              rank: 1,
+              size: 4,
+            },
+            {
+              division: "sheild",
+              rank: 2,
+              size: 5,
+            }
           ],
         },
       },
