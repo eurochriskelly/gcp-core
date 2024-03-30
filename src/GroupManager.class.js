@@ -1,60 +1,10 @@
-export default class GroupManagerHelper {
-    constructor() {
+class GroupManagerHelper {
+    constructor(stageParameters = []) {
         this.groupLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
         this.matches = {}
         this.teamList = []
         this.groupSizes = {}
-        this.stageParameters = [
-            {
-                stage: 'group',
-                groupSize: 3,
-                duration: 15,
-                break: 5,
-                gap: 5,
-            },
-            {
-                stage: 'group',
-                groupSize: 4,
-                duration: 10,
-                break: 3,
-                gap: 5,
-            },
-            {
-                stage: 'group',
-                groupSize: 5,
-                duration: 7.5,
-                break: 3,
-                gap: 5,
-            },
-            {
-                stage: 'eigth',
-                groupSize: 16,
-                duration: 7.5,
-                break: 3,
-                gap: 5,
-            },
-            {
-                stage: 'quarter',
-                groupSize: 8,
-                duration: 7.5,
-                break: 3,
-                gap: 5,
-            },
-            {
-                stage: 'semis',
-                groupSize: 8,
-                duration: 7.5,
-                break: 3,
-                gap: 5,
-            },
-            {
-                stage: 'finals',
-                groupSize: 8,
-                duration: 15,
-                break: 3,
-                gap: 5,
-            },
-        ]
+        this.stageParameters = stageParameters;
     }
     set teams(teams) {
         this.teamList = teams;
@@ -67,6 +17,10 @@ export default class GroupManagerHelper {
         this.simulateMatches()
     }
 
+    /**
+     * Generate matches for each group 
+     * @returns 
+     */
     generateMatches() {
         let matches = [];
     
@@ -147,6 +101,8 @@ export default class GroupManagerHelper {
     }
 }
 
+module.exports = GroupManagerHelper;
+
 function addMinutes(time, minsToAdd) {
     const [hours, minutes] = time.split(':').map(Number);
     let newMinutes = minutes + minsToAdd;
@@ -160,5 +116,4 @@ function addMinutes(time, minsToAdd) {
 
     return `${formattedHours}:${formattedMinutes}`;
 }
-
 
