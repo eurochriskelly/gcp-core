@@ -3,48 +3,70 @@ module.exports = {
     t1: {
       tournamentId: 6,
       description: "Benelux round A",
+      location: {
+        city: "Amsterdam",
+        address: "",
+        coordinates: [{}],
+      },
       startDate: "2024-04-01",
-      pitches: ["Pitch 5", "Pitch 11", "Pitch 12", "Pitch 13"],
+      pitches: [
+        {
+          name: "Pitch 5",
+          available: {
+            from: "10:00",
+            until: "19:00",
+          },
+        },
+        {
+          name: "Pitch 11",
+        },
+        {
+          name: "Pitch 12",
+        },
+        {
+          name: "Pitch 13",
+        },
+      ],
       categories: {
         Mens: {
-          groups: [
-            [
-              "Amsterdam A",
-              "Groningen",
-              "Leuven A",
-              "Hamburg/Bel'B'",
-              "Eindhoven",
-            ],
-            ["Luxembourg A", "Nijmegen", "Hague A", "Dusseldorf/Cologne"],
-            ["Belgium A", "Leuven B", "Maastricht", "Frankfurt"],
+          teams: [
+            "Amsterdam A",
+            "Groningen",
+            "Leuven A",
+            "Hamburg/Bel'B'",
+            "Eindhoven",
+            "Luxembourg A",
+            "Nijmegen",
+            "Hague A",
+            "Dusseldorf/Cologne",
+            "Belgium A",
+            "Leuven B",
+            "Maastricht",
+            "Frankfurt",
           ],
           knockouts: {
             rules: {
-              divisionOrder: ['cup', 'shield', 'plate'],
-              selection: 
+              divisionOrder: ["cup", "shield", "plate"],
+              selection: "default",
             },
             divisions: {
               cup: 4,
               shield: 4,
               plate: 5,
             },
-          ],
+          },
         },
         Ladies: {
-          groups: [
-            [
-              "Leuven A",
-              "A'dam'B'/Leuven'B'",
-              "Belgium A",
-              "Groningen",
-              "Nijmegen",
-            ],
-            [
-              "Luxembourg A",
-              "Hague/Frankfurt",
-              "Hamb/Duss/Lux'B'",
-              "Amsterdam A",
-            ],
+          teams: [
+            "Leuven A",
+            "A'dam'B'/Leuven'B'",
+            "Belgium A",
+            "Groningen",
+            "Nijmegen",
+            "Luxembourg A",
+            "Hague/Frankfurt",
+            "Hamb/Duss/Lux'B'",
+            "Amsterdam A",
           ],
           knockouts: [
             {
@@ -53,10 +75,10 @@ module.exports = {
               size: 4,
             },
             {
-              division: "sheild",
+              division: "shield",
               rank: 2,
               size: 5,
-            }
+            },
           ],
         },
       },
