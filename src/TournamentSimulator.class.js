@@ -1,3 +1,5 @@
+const { addMinutes } = require('./util')
+
 class GroupManagerHelper {
     constructor(stageParameters = []) {
         this.groupLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
@@ -103,17 +105,5 @@ class GroupManagerHelper {
 
 module.exports = GroupManagerHelper;
 
-function addMinutes(time, minsToAdd) {
-    const [hours, minutes] = time.split(':').map(Number);
-    let newMinutes = minutes + minsToAdd;
-    let newHours = hours + Math.floor(newMinutes / 60);
-    newMinutes %= 60;
-    newHours %= 24; // Reset to 0 if it goes to 24
 
-    // Zero padding
-    const formattedHours = newHours.toString().padStart(2, '0');
-    const formattedMinutes = newMinutes.toString().padStart(2, '0');
-
-    return `${formattedHours}:${formattedMinutes}`;
-}
 
