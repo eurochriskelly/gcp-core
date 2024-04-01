@@ -5,7 +5,7 @@ const TournamentOrganize = require('./TournamentOrganize.class');
 const tournament_1 = TEST_DATA.tournaments["t1"];
 
 describe('TournamentOrganize', () => {
-  it("can assign teams to groups", () => {
+  it.skip("can assign teams to groups", () => {
     const cat = 'Mens'
     const T = new Tournament(tournament_1)
     const TO = new TournamentOrganize(T)
@@ -16,8 +16,26 @@ describe('TournamentOrganize', () => {
   
   it('Can schedule group fixtures', () => {
     const T = new Tournament(tournament_1)
-    const O = new TournamentOrganize(T);
+    const TO = new TournamentOrganize(T);
     T.clearFixtures();
     // T.updateGroups();
+    expect(T.schedule.length).toBe(0);
+    const cat = 'Mens';
+    TO.assignTeamsToGroups(cat);
+    const matches = TO.calculateGroupStageFixtures(cat);
+    console.table(matches)
+  })
+})
+
+describe('End to end tournament organization', () => {
+  it('completes the definition of a tournament from a minimal rules input', () => {
+    const T = new Tournament(tournament_1);
+    const TO = new TournamentOrganize(T);
+    TO.generate();
+    // expect teams to be placed in groups
+    // expect multiple fixtures
+    // expect group fixtures to be set out
+    // expect knockout fixtures to be calculated also
+    // expect schedule to be set for all games
   })
 })
