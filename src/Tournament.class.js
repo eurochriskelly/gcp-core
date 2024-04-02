@@ -5,7 +5,7 @@ class Tournament {
     this.startDate = new Date();
     this.pitches = new Set();
     this.categories = [];
-    this.schedule = [];
+    this.fixtures = [];
     if (tdata) {
       this.load(tdata)
     }
@@ -47,7 +47,7 @@ class Tournament {
     // Swap all instances of team2 with team1 in fixtures of this category
   }
   clearFixtures() {
-    this.schedule = []
+    this.fixtures = []
   }
   addFixture(
     time,
@@ -60,7 +60,7 @@ class Tournament {
     umpireTeam,
     duration,
   ) {
-    this.schedules.push([
+    this.fixtures.push([
       time,
       pitch,
       stage,
@@ -79,14 +79,14 @@ class Tournament {
       startDate,
       pitches,
       categories,
-      schedule,
+      fixtures,
     } = tdata;
     this.tournamentId = tournamentId;
     this.description = description;
     this.startDate = startDate;
     this.pitches = new Set(pitches);
     this.categories = categories;
-    this.schedule = schedule;
+    this.fixtures = fixtures;
   }
   // ASSERTIONS
   assertCategory(cat) {

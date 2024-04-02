@@ -1,4 +1,8 @@
-const { calculateNextGameStartTime, assignTeamsToGroups } = require("./util");
+const { 
+  calculateNextGameStartTime, 
+  calculateGroupStageFixtures,
+  assignTeamsToGroups 
+} = require("./util");
 
 describe("Useful utility functions", () => {
   it("can calculate time for upcoming matches", () => {
@@ -40,4 +44,37 @@ describe("Useful utility functions", () => {
     expect(result[0].length).toBe(3)
     expect(result[1].length).toBe(3)
   });
+
+
+  it.only('maximizes rest time for teams in stage', () => {
+    const slack = [0, 0, 60, 40, 25, 20, 15];
+    const groups = [
+      ['Team 1', 'Team 2', 'Team 3', 'Team 4', 'Team 11'],
+      ['Team 5', 'Team 6', 'Team 7'],
+      ['Team 8', 'Team 9', 'Team 10'],
+    ]
+    const matches = calculateGroupStageFixtures('Mens', groups, slack, false);
+    console.table(matches.filter(m => m.group === 0))
+    matches.forEach(match => {
+      expect(match.allottedTime).toBeGreaterThanOrEqual(0)
+    })
+  })
+
+  it('schedules group fixtures', () => {
+    const cat = 'Mens';
+    const groups = [
+      ['Team 1', 'Team 2', 'Team 3', 'Team 4'],
+      ['Team 5', 'Team 6', 'Team 7'],
+      ['Team 8', 'Team 9', 'Team 10'],
+      ['Team 11', 'Team 12', 'Team 13']
+    ]
+    const matches = calculateGroupStageFixtures(cat, groups, [0, 0, 60, 40, 25, 20, 15]);
+    // how many matches were defined for this group?
+    expect(matches.length).toBe(
+      (1 + 2 + 3) + // A group of 4
+      (1 + 2) +     // A group of 3
+      (1 + 2) +     // A group of 3
+      (1 + 2)       // A group of 3
+    );
+  })
 });
