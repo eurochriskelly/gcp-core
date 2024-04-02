@@ -1,6 +1,6 @@
 const { addMinutes } = require('./util')
 
-class GroupManagerHelper {
+class TournamentSimulator {
     constructor(stageParameters = []) {
         this.groupLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
         this.matches = {}
@@ -19,59 +19,6 @@ class GroupManagerHelper {
         this.simulateMatches()
     }
 
-    /**
-     * Generate matches for each group 
-     * @returns 
-     */
-    generateMatches() {
-        let matches = [];
-    
-        // Group teams by their group
-        const teamsByGroup = this.teamList.reduce((groups, team) => {
-            if (!groups[team.group]) {
-                groups[team.group] = [];
-            }
-            groups[team.group].push(team.name);
-            matches[team.group] = [];
-            return groups;
-        }, {});
-
-        Object.keys(teamsByGroup)
-            .forEach(group => {
-                const groupTeams = teamsByGroup[group];
-                let timeOffset = 0
-                let nextStart = '09:00'
-                for (let i = 0; i < groupTeams.length; i++) {
-                    for (let j = i + 1; j < groupTeams.length; j++) {
-                        const d = this.stageParameters.find(d => d.groupSize === this.groupSizes[group])
-                        const { duration = 0, break: breakDuration = 0, gap = 0 } = d || {}
-                        matches[group].push({
-                            offset: timeOffset,
-                            start: nextStart,
-                            team1: groupTeams[i],
-                            team2: groupTeams[j],
-                            time: {
-                                playing: duration * 2,
-                                gap: gap + breakDuration,
-                            }
-                        })
-                        const minWait = Math.round((duration * 2 + gap + breakDuration) / 5) * 5
-                        timeOffset += minWait
-                        nextStart = addMinutes(nextStart,  minWait)
-                    }
-                }
-            });
-
-            Object.keys(matches)
-            .forEach(group => {
-                //console.log(`Group ${group}`)
-                // console.table(matches[group].map(x => ({ ...x, time: `${x.time.playing} + ${x.time.gap}` })))
-                const totalPlayingTime = matches[group].reduce((p, c) => p + c.time.playing, 0)
-                console.log(`Active team playing time: ${totalPlayingTime/this.groupSizes[group]} minutes.`)
-            });
-        this.matches = matches;
-        return matches;
-    }
 
     matchesTable(group) {
         if (this.matches[group] === undefined) return []
@@ -103,7 +50,4 @@ class GroupManagerHelper {
     }
 }
 
-module.exports = GroupManagerHelper;
-
-
-
+module.exports = TournamentSimulator;
