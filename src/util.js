@@ -116,6 +116,7 @@ const calculateGroupStageFixtures = (
         const team1 = roundTeams[match];
         const team2 = roundTeams[roundTeams.length - match - 1];
         if (team1 !== null && team2 !== null) { // Skip the dummy team's "match"
+          // FIXME: please use fixtures object
           groupMatches.push({
             matchId: matches.length + 1, // Assuming unique IDs are desired
             category,
@@ -139,9 +140,169 @@ const calculateGroupStageFixtures = (
   return matches;
 }
 
+/**
+ * Generate matches for a knockout stage
+ */
+const calculateKnockoutStageFixtures = (
+  range, // e.g. [0, 3] for first 4 teams
+  groupSizes,
+  slack = [15, 20, 30, 50], // eights, quarters, semis, final
+) => {
+  /*
+   if `groupSizes` are [5, 3, 3, 3], then the team positions are:
+
+      G1 | G2 | G3 | G4
+      ---+----+----+----
+      1  | 2  | 3  | 4
+      5  | 6  | 7  | 8
+      8  | 9  | 10 | 11 
+      12 | -  | -  | -
+      13 | -  | -  | -     
+  */
+  const slackLookup = {
+    eights: slack[0],
+    quarters: slack[1],
+    semis: slack[2],
+    bronze: slack[2],
+    finals: slack[3],
+  }
+  let matches = [];
+  const numGroups = groupSizes.length;
+  const numTeams = groupSizes.reduce((a, b) => a + b, 0);
+  // See doc/knockouts.md for a detailed explanation of the algorithm
+  const calcType = (stage, group, position) => ({ type: 'calculated', stage, group, position});
+  switch (numGroups) {
+    case 2:
+      matches = [
+        {
+          stage: 'semis:1',
+          allottedTime: slackLookup.semis,
+          team1: calcType('group', 1, 1), // "Winner of Group 1"{
+          team2: calcType('group', 3, 1), // "Winner of Group 2"
+        },
+        {
+          stage: 'semis:2', 
+          allottedTime: slackLookup.semis,
+          team1: calcType('group', 2, 1), // "~group:2/p:1", // "Winner of Group 2"
+          team2: calcType('group', 4, 1), // "~group:4/p:1", // "Winner of Group 4"
+        },
+        {
+          stage: 'bronze',
+          allottedTime: slackLookup.bronze,
+          team1: calcType('semis', 1, 2),
+          team2: calcType('semis', 2, 2),
+        },
+        {
+          stage: 'finals',
+          allottedTime: slackLookup.finals,
+          team1: calcType('semis', 1, 1),
+          team2: calcType('semis', 2, 1),
+        },
+      ]
+      break;
+    // TODO: 8 is usually not exactly 8 teams because its the last bracket in a blitz
+    case 4:
+      const teamIds = getTeamIds(range, groupSizes);
+      const addMatch = (id, stage, team1, team2 ) => {
+        const progression = stage.split(':').shift()
+        switch (progression) {
+          case 'quarters':
+            if (teamIds.includes(team1) && teamIds.includes(team2)) {
+              return {
+                id,
+                stage,
+                allottedTime: slackLookup[progression],
+                team1: calcType('group', team1, 1), 
+                team2: calcType('group', team2, 2),
+              }
+            } else {
+              return { team: team1, autoqual: true }
+            }
+            break
+          case 'semis':
+            return {
+              id,
+              stage,
+              allottedTime: slackLookup[progression],
+              // some teams may automatically qualify
+              team1: typeof team1 === 'number'
+                ? calcType('quarters', team1, 1)
+                : calcType('group', team1.team, 1),
+              team2: typeof team2 === 'number'
+                ? calcType('quarters', team2, 1)
+                : calcType('group', team2.team, 1),
+            }
+            break
+          case 'bronze':
+            return {
+              id,
+              stage,
+              allottedTime: slackLookup[progression],
+              team1: calcType('semis', team1, 2), // `~semis:${team1}/p:2`,
+              team2: calcType('semis', team2, 2), // `~semis:${team2}/p:2`,
+            }
+            break
+          case 'finals':
+            return {
+              id,
+              stage,
+              allottedTime: slackLookup[progression],
+              team1: calcType('semis', team1, 1), // `~semis:${team1}/p:1`,
+              team2: calcType('semis', team2, 1), // `~semis:${team2}/p:1`,
+            }
+            break
+          default:
+            throw new Error(`Unknown stage: ${stage}`)
+          }
+      }
+      const q1 = addMatch(1, 'quarters:1', 1, 8)
+      const q2 = addMatch(2, 'quarters:2', 3, 6)
+      const q3 = addMatch(3, 'quarters:3', 2, 7)
+      const q4 = addMatch(4, 'quarters:4', 4, 5)
+      matches = [
+        q1, q2, q3, q4,
+        addMatch(5, 'semis:1', 
+          q1.autoqual ? q1 : 1, 
+          q2.autoqual ? q2 : 2
+        ), // quarters 1 vs 2
+        addMatch(6, 'semis:2', 
+          q3.autoqual ? q3 : 3,
+          q4.autoqual ? q4 : 4
+        ), // quarters 3 vs 4
+        addMatch(7, 'bronze:1', 1, 2), // semis 1 vs 2
+        addMatch(8, 'finals:1', 1, 2), // semis 3 vs 4
+      ].filter(x => !x.autoqual)
+      break;
+  }
+  return matches;
+}
+
+const getTeamIds = (range, groupSizes) => {
+  // Calculate cumulative group sizes to understand group boundaries
+  const cumulativeGroupSizes = groupSizes.map((sum => value => sum += value)(0));
+
+  const start = range[0];
+  const end = Math.min(range[1], cumulativeGroupSizes[cumulativeGroupSizes.length - 1] - 1);
+  const result = [];
+
+  for (let i = start; i <= end; i++) {
+      let groupIndex = cumulativeGroupSizes.findIndex(cumulative => i < cumulative);
+      let prevCumulative = groupIndex > 0 ? cumulativeGroupSizes[groupIndex - 1] : 0;
+      let positionInGroup = i - prevCumulative;
+
+      // Calculate the ID based on the group and position within the group
+      let id = groupIndex * groupSizes[0] + positionInGroup + 1;
+      result.push(id);
+  }
+
+  return result.map((_, i) => i + 1);
+};
+
 module.exports = {
   calculateNextGameStartTime,
   calculateGroupStageFixtures,
+  calculateKnockoutStageFixtures,
+  getTeamIds,
   addMinutes,
   shuffleArray,
   assignTeamsToGroups,

@@ -1,8 +1,12 @@
 const { 
   calculateNextGameStartTime, 
   calculateGroupStageFixtures,
+  calculateKnockoutStageFixtures,
+  getTeamIds,
   assignTeamsToGroups 
 } = require("./util");
+
+const VERBOSE = false;
 
 describe("Useful utility functions", () => {
   it("can calculate time for upcoming matches", () => {
@@ -46,7 +50,7 @@ describe("Useful utility functions", () => {
   });
 
 
-  it.only('maximizes rest time for teams in stage', () => {
+  it('maximizes rest time for teams in stage', () => {
     const slack = [0, 0, 60, 40, 25, 20, 15];
     const groups = [
       ['Team 1', 'Team 2', 'Team 3', 'Team 4', 'Team 11'],
@@ -54,7 +58,7 @@ describe("Useful utility functions", () => {
       ['Team 8', 'Team 9', 'Team 10'],
     ]
     const matches = calculateGroupStageFixtures('Mens', groups, slack, false);
-    console.table(matches.filter(m => m.group === 0))
+    // console.table(matches.filter(m => m.group === 0))
     matches.forEach(match => {
       expect(match.allottedTime).toBeGreaterThanOrEqual(0)
     })
@@ -77,4 +81,115 @@ describe("Useful utility functions", () => {
       (1 + 2)       // A group of 3
     );
   })
+
 });
+
+describe("Knockout stage fixtures", () => {
+  it('Can work out team ids based on list', () => {
+    let ids = []
+    ids = getTeamIds([0, 3], [4, 3, 3, 3])
+    expect(ids).toEqual([1, 2, 3, 4])
+    ids = getTeamIds([8, 15], [5, 3, 3, 3])
+    expect(ids).toEqual([1, 2, 3, 4, 5, 6])
+    ids = getTeamIds([4, 15], [6, 5])
+    expect(ids).toEqual([1, 2, 3, 4, 5, 6, 7])
+  })
+
+  it('schedules knockout fixtures for a 4-team bracket', () => {
+    const range = [0, 3];
+    const groupSizes = [4, 3, 3, 3];
+    const slack = [25, 30, 35, 40];
+    const matches = calculateKnockoutStageFixtures(
+      range,
+      groupSizes,
+      slack
+    );
+    prettyPrintMatches(matches);
+    expect(matches.length).toBe(4)
+    expect(matches[0].stage).toBe('semis:1')
+    expect(matches.filter(m => m.stage === 'finals:1').shift().allottedTime).toBe(slack.pop())
+  })
+  it('schedules knockout fixtures for a 8-team bracket with fewer than 8 teams', () => {
+    // With all 8 teams in the last bracket
+    {
+      const range = [8, 15];
+      const groupSizes = [4, 4, 4, 4];
+      const slack = [25, 30, 35, 40];
+      const matches = calculateKnockoutStageFixtures(
+        range,
+        groupSizes,
+        slack
+      );
+      prettyPrintMatches(matches)
+      expect(matches.length).toBe(8)
+      const quarters = matches.filter(m => m.stage.startsWith('quarters'))
+      expect(quarters.length).toBe(4)
+      const semis = matches.filter(m => m.stage.startsWith('semis'))
+      expect(semis.length).toBe(2)
+      const firstSemis = matches.filter(m => m.stage === 'semis:1').shift()
+      expect(firstSemis.team1.stage).toBe('quarters')
+      expect(firstSemis.team2.stage).toBe('quarters')
+    }
+    // With 6 teams in the last bracket
+    {
+      const range = [8, 15];
+      const groupSizes = [4, 4, 3, 3];
+      const slack = [25, 30, 35, 40];
+      const matches = calculateKnockoutStageFixtures(
+        range,
+        groupSizes,
+        slack
+      );
+      prettyPrintMatches(matches)
+      expect(matches.length).toBe(6)
+      const quarters = matches.filter(m => m.stage.startsWith('quarters'))
+      expect(quarters.length).toBe(2)
+      const semis = matches.filter(m => m.stage.startsWith('semis'))
+      expect(semis.length).toBe(2)
+      const firstSemis = matches.filter(m => m.stage === 'semis:1').shift()
+      expect(firstSemis.team1.stage).toBe('group')
+      expect(firstSemis.team2.stage).toBe('quarters')
+    }
+    // With 4 teams in the last bracket
+    {
+      const range = [8, 15];
+      const groupSizes = [3, 3, 3, 3];
+      const slack = [25, 30, 35, 40];
+      const matches = calculateKnockoutStageFixtures(
+        range,
+        groupSizes,
+        slack
+      );
+      prettyPrintMatches(matches)
+      expect(matches.length).toBe(4)
+      const quarters = matches.filter(m => m.stage.startsWith('quarters'))
+      expect(quarters.length).toBe(0)
+      const semis = matches.filter(m => m.stage.startsWith('semis'))
+      expect(semis.length).toBe(2)
+      const firstSemis = matches.filter(m => m.stage === 'semis:1').shift()
+      expect(firstSemis.team1.stage).toBe('group')
+      expect(firstSemis.team2.stage).toBe('group')
+    }
+  })
+})
+
+
+function prettyPrintMatches(matches) {
+  return VERBOSE
+    ? console.table(matches.map(m => {
+      const strteam = t => {
+        const { type, stage, group, position } = t;
+        if (type === 'calculated') {
+          return `~${stage}:${group}/p:${position}`
+        } else {
+          return 'real'
+        }
+      }
+      return {
+        ...m,
+        team1: strteam(m.team1),
+        team2: strteam(m.team2),
+      }
+    }))
+    : null;
+}
