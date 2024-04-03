@@ -187,13 +187,13 @@ const calculateKnockoutStageFixtures = (
           team2: calcType('group', 4, 1), // "~group:4/p:1", // "Winner of Group 4"
         },
         {
-          stage: 'bronze',
+          stage: 'bronze:1',
           allottedTime: slackLookup.bronze,
           team1: calcType('semis', 1, 2),
           team2: calcType('semis', 2, 2),
         },
         {
-          stage: 'finals',
+          stage: 'finals:1',
           allottedTime: slackLookup.finals,
           team1: calcType('semis', 1, 1),
           team2: calcType('semis', 2, 1),
@@ -209,7 +209,6 @@ const calculateKnockoutStageFixtures = (
           case 'quarters':
             if (teamIds.includes(team1) && teamIds.includes(team2)) {
               return {
-                id,
                 stage,
                 allottedTime: slackLookup[progression],
                 team1: calcType('group', team1, 1), 
@@ -221,7 +220,6 @@ const calculateKnockoutStageFixtures = (
             break
           case 'semis':
             return {
-              id,
               stage,
               allottedTime: slackLookup[progression],
               // some teams may automatically qualify
@@ -235,7 +233,6 @@ const calculateKnockoutStageFixtures = (
             break
           case 'bronze':
             return {
-              id,
               stage,
               allottedTime: slackLookup[progression],
               team1: calcType('semis', team1, 2), // `~semis:${team1}/p:2`,
@@ -244,7 +241,6 @@ const calculateKnockoutStageFixtures = (
             break
           case 'finals':
             return {
-              id,
               stage,
               allottedTime: slackLookup[progression],
               team1: calcType('semis', team1, 1), // `~semis:${team1}/p:1`,
@@ -271,7 +267,12 @@ const calculateKnockoutStageFixtures = (
         ), // quarters 3 vs 4
         addMatch(7, 'bronze:1', 1, 2), // semis 1 vs 2
         addMatch(8, 'finals:1', 1, 2), // semis 3 vs 4
-      ].filter(x => !x.autoqual)
+      ].filter(x => !x.autoqual).map(x => {
+        return {
+          ...x,
+          groupSize: numTeams
+        }
+      })
       break;
   }
   return matches;
