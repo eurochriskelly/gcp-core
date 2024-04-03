@@ -88,6 +88,31 @@ class Tournament {
     this.categories = categories;
     this.fixtures = fixtures;
   }
+  // OUTPUT
+  prettyPrintFixtures(filters = {}) {
+    console.table(this.fixtures
+      .filter(f => {
+        if (filters.category) {
+          return f.category === filters.category
+        }
+        return true
+      })
+      .map(m => {
+        const strteam = t => {
+          const { type, stage, group, position } = t;
+          if (type === 'calculated') {
+            return `~${stage}:${group}/p:${position}`
+          } else {
+            return t
+          }
+        }
+        return {
+          ...m,
+          team1: strteam(m.team1),
+          team2: strteam(m.team2),
+        }
+      }))
+  }
   // ASSERTIONS
   assertCategory(cat) {
     const names = this.categoryNames;

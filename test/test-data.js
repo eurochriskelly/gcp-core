@@ -3,6 +3,22 @@ module.exports = {
     t1: {
       tournamentId: 6,
       description: "Benelux round A",
+      rules: {
+        points: {
+          positional: [25, 20, 18, 16, 14, 12, 10, 8, 6, 4, 2, 1], 
+          participation: 2, // automatically receive 2 points for participating
+        },
+        stages: {
+          preliminary: {
+            match: {
+              win: 3,
+              draw: 1,
+              loss: 0,
+            },
+          },
+          elimination: {},
+        }
+      },
       location: {
         city: "Amsterdam",
         address: "",
@@ -49,22 +65,18 @@ module.exports = {
             "Maastricht",
             "Frankfurt",
           ],
-          brackets: {
-            rules: {},
-            groups: {},
-            knockouts: {},
-          },
-          knockouts: {
-            rules: {
-              divisionOrder: ["cup", "shield", "plate"],
-              selection: "default",
-            },
-            divisions: {
-              cup: 4,
-              shield: 4,
-              plate: 5,
+          rules: {
+            preliminary: {},
+            elimination: {
+              brackets: {
+                cup: 4,
+                shield: 4,
+                plate: 8,  
+              }
             },
           },
+          groups: [],
+          fixtures: []
         },
         Ladies: {
           teams: [
@@ -78,18 +90,16 @@ module.exports = {
             "Hamb/Duss/Lux'B'",
             "Amsterdam A",
           ],
-          knockouts: [
-            {
-              division: "cup",
-              rank: 1,
-              size: 4,
+          rules: {
+            preliminary: {},
+            elimination: {
+              brackets: {
+                cup: 4,
+                shield: 8,
+              }
             },
-            {
-              division: "shield",
-              rank: 2,
-              size: 5,
-            },
-          ],
+          },
+          groups: [],
           fixtures: [],
         },
       },

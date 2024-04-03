@@ -7,7 +7,7 @@
  * - Calculating fixtures for the knockout stage for each cup in tournament
  * - Scheduling the tournament
  */
-const { assignTeamsToGroups, calculateGroupStageFixtures } = require("./util");
+const { assignTeamsToGroups, calculateGroupStageFixtures, calculateKnockoutStageFixtures } = require("./util");
 
 class TournamentOrganize {
   constructor(T) {
@@ -20,7 +20,7 @@ class TournamentOrganize {
    * 1. [x] Assign teams to groups
    * 2. [x] Generate group stage fixtures (external function)
    * 3. [x] Order group stage fixtures
-   * 4. [ ] Generate knockout stage fixtures
+   * 4. [x] Generate knockout stage fixtures
    * 5. [ ] Order knockout stage fixtures
    * 6. [ ] Assign upmires to fixtures
    * 
@@ -42,11 +42,18 @@ class TournamentOrganize {
         )
       ]
     });
-    this.orderGroupStageFixtures();
-    this.generateKnockoutFixtures();
 
-    //console.log(T)
-    console.table(T.fixtures);
+    this.orderGroupStageFixtures();
+    Object.keys(T.categories).forEach(cat => {
+      T.fixtures = [
+        ...T.fixtures,
+        ...this.generateKnockoutFixtures(cat),
+      ]
+    });
+
+    T.prettyPrintFixtures({ 
+      // category: 'Mens' 
+    });
     // for each category in categories generate group fixtures
   }
 
@@ -57,12 +64,38 @@ class TournamentOrganize {
     T.categories[category].groups = assignTeamsToGroups(teams, randomize);
   }
 
-  generateKnockoutFixtures() {
+  generateKnockoutFixtures(cat) {
     const T = this.tournament;
-    Object.keys(T.categories).forEach(cat => {
-      console.log(T.categories[cat]);
-    });
+    let matches = [];
+    const { brackets } = T.categories[cat].rules.elimination;
+    const elimSlack = [ 30, 35, 40, 45 ];
+    const bracketCursor = 0;
+    const bracketNames = Object.keys(brackets);
+    console.log(bracketNames)
+    bracketNames.forEach(bracket => {
+      let bracketMatches = [];
+      // determine the number of teams in the bracket
+      const numTeams = brackets[bracket];
+      const range = [bracketCursor, bracketCursor + numTeams - 1]
+      const groupSizes = [4, 3, 3, 3]; // FIXME: get the right sizes
+      const enhance = match => {
+        const [stage, group] = match.stage.split(':')
+        return {
+          matchId: this.nextFixture++,
+          ...match,
+          stage, 
+          group: group ? parseInt(group) : null, 
+          bracket,
+          category: cat,
+          numTeams
+        }
+      }
+      bracketMatches = calculateKnockoutStageFixtures(range, groupSizes, elimSlack).map(enhance)
+      matches = [ ...matches, ...bracketMatches ]
+    })
+    return matches;
   }
+
 
   // 3. Generate group stage fixtures
   orderGroupStageFixtures() {

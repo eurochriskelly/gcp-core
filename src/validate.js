@@ -47,7 +47,14 @@ const checkPitches = (data, issues = []) => {
         }
         return true
     })
+}
 
+checkRules = (data, issues = []) => {
+    // TODO: rules must be valid
+
+    // elimination rules
+    // 1. sum of group sizes must be greater than or equal to number of teams
+    // 2. group sizes must be a power of 2
 }
 
 const checkTeams = (data, issues = []) => {
