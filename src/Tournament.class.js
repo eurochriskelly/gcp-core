@@ -22,6 +22,24 @@ class Tournament {
   get categoryNames() {
     return Object.keys(this.categories);
   }
+  get bracketNames() {
+    // get bracket names for each category
+    return this.categoryNames
+      .map(cat => [cat, Object.keys(this.categories[cat].rules.elimination.brackets)])
+      .reduce((acc, [cat, brackets]) => {
+        acc[cat] = brackets;
+        return acc;
+      }, {});
+  }
+  get groupSizes() {
+    // get group sizes for each category
+    return this.categoryNames
+      .map(cat => [cat, this.categories[cat].groups.map(g => g.length)])
+      .reduce((acc, [cat, sizes]) => {
+        acc[cat] = sizes;
+        return acc;
+      }, {})
+  }
   addPitch(pitch) {
     this.pitches.add(pitch);
   }
@@ -52,10 +70,13 @@ class Tournament {
   addFixture(
     time,
     pitch,
+    bracket,
     stage,
     category,
     group,
+    letter1 = '',
     team1,
+    letter2 = '',
     team2,
     umpireTeam,
     duration,
@@ -63,10 +84,13 @@ class Tournament {
     this.fixtures.push([
       time,
       pitch,
+      bracket,
       stage,
       category,
       group,
+      letter1,
       team1,
+      letter2,
       team2,
       umpireTeam,
       duration,
@@ -88,15 +112,22 @@ class Tournament {
     this.categories = categories;
     this.fixtures = fixtures;
   }
+  updateLetters() {
+    // Update the letters for each fixture
+    this.fixtures.forEach((f, i) => {
+      const { team1, team2, category } = f;
+      const index1 = this.categories[category].teams.indexOf(team1);
+      const index2 = this.categories[category].teams.indexOf(team2);
+      let l = String.fromCharCode(65 + index1);
+      if (l !== '@') f.letter1 = l
+      l = String.fromCharCode(65 + index2);
+      if (l !== '@') f.letter2 = l
+    });
+  }
   // OUTPUT
-  prettyPrintFixtures(filters = {}) {
+  prettyPrintFixtures(filter = () => true) {
     console.table(this.fixtures
-      .filter(f => {
-        if (filters.category) {
-          return f.category === filters.category
-        }
-        return true
-      })
+      .filter(filter)
       .map(m => {
         const strteam = t => {
           const { type, stage, group, position } = t;
