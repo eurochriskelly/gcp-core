@@ -4,6 +4,8 @@ const Tournament = require('./Tournament.class')
 const TournamentOrganize = require('./TournamentOrganize.class');
 
 const tournament_1 = TEST_DATA.tournaments["t1"];
+const tournament_2 = TEST_DATA.tournaments["t2"];
+const tournament_3 = TEST_DATA.tournaments["t3"];
 
 describe('TournamentOrganize', () => {
 
@@ -19,16 +21,18 @@ describe('TournamentOrganize', () => {
   it("generates fixtures for all knockout stages", () => {
     const T = new Tournament(tournament_1)
     const TO = new TournamentOrganize(T)
-    const matches = TO.generateKnockoutFixtures()
-    prettyPrintMatches(matches);
-    expect(T.fixtures.length).toBeGreaterThan(0)
+    const cat = 'Mens'
+    TO.assignTeamsToGroups(cat)
+    const { groups } = T.categories[cat]
+    const matches = TO.generateKnockoutFixtures(cat, groups)
+    expect(matches.length).toBeGreaterThan(0)
   })
 
 })
 
 describe('End to end tournament organization', () => {
 
-  it.only('completes the definition of a tournament from a minimal rules input', () => {
+  it('completes the definition of a tournament from a minimal rules input', () => {
     const T = new Tournament(tournament_1);
     const TO = new TournamentOrganize(T);
     TO.generate();

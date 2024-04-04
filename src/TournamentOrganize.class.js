@@ -23,7 +23,6 @@ class TournamentOrganize {
    * 4. [x] Generate knockout stage fixtures
    * 5. [ ] Order knockout stage fixtures
    * 6. [ ] Assign upmires to fixtures
-   * 
    */
   generate() {
     this.nextFixture = 1;
@@ -42,19 +41,22 @@ class TournamentOrganize {
         )
       ]
     });
+    T.updateLetters();
 
     this.orderGroupStageFixtures();
+
     Object.keys(T.categories).forEach(cat => {
+      const knockoutFixtures = this.generateKnockoutFixtures(cat, T.groupSizes[cat]);
       T.fixtures = [
         ...T.fixtures,
-        ...this.generateKnockoutFixtures(cat),
+        ...knockoutFixtures,
       ]
+      this.orderKnockoutStageFixtures(cat);
     });
 
-    T.prettyPrintFixtures({ 
-      // category: 'Mens' 
-    });
+    T.updateLetters();
     // for each category in categories generate group fixtures
+    // T.prettyPrintFixtures(f => f.category === 'Mens' && f.stage !== 'group');
   }
 
   // 1. Assign teams to groups
@@ -64,24 +66,49 @@ class TournamentOrganize {
     T.categories[category].groups = assignTeamsToGroups(teams, randomize);
   }
 
-  generateKnockoutFixtures(cat) {
+  orderKnockoutStageFixtures(cat) {
+    const T = this.tournament;
+    const catFixtures = T.fixtures.filter(f => f.category === cat && f.stage === 'group')
+    const lastOffset = catFixtures.pop().offset; 
+    const catKnockoutFixtures = T.fixtures.filter(f => f.category === cat && f.stage !== 'group')
+    // For each non-group fixture, order by idealized order
+    // In principle, all brackets can be played in parallel if there are pitches and refs available
+    // So we can order by offset
+    T.bracketNames[cat].forEach(bracket => {
+      let bracketOffset = 0;
+      const bracketFixtures = catKnockoutFixtures.filter(f => f.bracket === bracket)
+      const seenOrders = [...(new Set(bracketFixtures.map(f => f.order)))]
+      seenOrders.sort().forEach(order => {
+        let maxAllottedTime = 0;
+        bracketFixtures
+          .filter(f => f.order === order)
+          .forEach(fixture => {
+            fixture.offset = lastOffset + bracketOffset + fixture.allottedTime 
+            maxAllottedTime = Math.max(maxAllottedTime, fixture.allottedTime)
+          })
+        bracketOffset += maxAllottedTime;
+      })
+    })
+  }
+
+  generateKnockoutFixtures(cat, groupSizes) {
     const T = this.tournament;
     let matches = [];
     const { brackets } = T.categories[cat].rules.elimination;
     const elimSlack = [ 30, 35, 40, 45 ];
-    const bracketCursor = 0;
+    let bracketCursor = 0;
     const bracketNames = Object.keys(brackets);
-    console.log(bracketNames)
     bracketNames.forEach(bracket => {
       let bracketMatches = [];
       // determine the number of teams in the bracket
       const numTeams = brackets[bracket];
       const range = [bracketCursor, bracketCursor + numTeams - 1]
-      const groupSizes = [4, 3, 3, 3]; // FIXME: get the right sizes
+      bracketCursor += numTeams;
       const enhance = match => {
         const [stage, group] = match.stage.split(':')
         return {
           matchId: this.nextFixture++,
+          offset: -1,
           ...match,
           stage, 
           group: group ? parseInt(group) : null, 
