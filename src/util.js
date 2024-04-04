@@ -26,8 +26,8 @@ const assignTeamsToGroups = (teams, shuffle = false) => {
   if (numTeams >= 24) {
     numGroups = 8;
   } else {
-    if (numTeams >= 11) {
-      numGroups = 4;
+    if (numTeams > 11) { // 11 is a special case because with 4 games one group 
+      numGroups = 4;     // has 2 which is too small, or 6 which is big. We favour 6.
     } else {
       if (numTeams >= 6) {
         numGroups = 2;
@@ -176,24 +176,28 @@ const calculateKnockoutStageFixtures = (
       matches = [
         {
           stage: 'semis:1',
+          order: 0,
           allottedTime: slackLookup.semis,
           team1: calcType('group', 1, 1), // "Winner of Group 1"{
           team2: calcType('group', 3, 1), // "Winner of Group 2"
         },
         {
-          stage: 'semis:2', 
+          stage: 'semis:2',
+          order: 0,
           allottedTime: slackLookup.semis,
           team1: calcType('group', 2, 1), // "~group:2/p:1", // "Winner of Group 2"
           team2: calcType('group', 4, 1), // "~group:4/p:1", // "Winner of Group 4"
         },
         {
           stage: 'bronze:1',
+          order: 1,
           allottedTime: slackLookup.bronze,
           team1: calcType('semis', 1, 2),
           team2: calcType('semis', 2, 2),
         },
         {
           stage: 'finals:1',
+          order: 1,
           allottedTime: slackLookup.finals,
           team1: calcType('semis', 1, 1),
           team2: calcType('semis', 2, 1),
@@ -203,13 +207,14 @@ const calculateKnockoutStageFixtures = (
     // TODO: 8 is usually not exactly 8 teams because its the last bracket in a blitz
     case 4:
       const teamIds = getTeamIds(range, groupSizes);
-      const addMatch = (id, stage, team1, team2 ) => {
+      const addMatch = (stage, team1, team2 ) => {
         const progression = stage.split(':').shift()
         switch (progression) {
           case 'quarters':
             if (teamIds.includes(team1) && teamIds.includes(team2)) {
               return {
                 stage,
+                order: 0,
                 allottedTime: slackLookup[progression],
                 team1: calcType('group', team1, 1), 
                 team2: calcType('group', team2, 2),
@@ -221,6 +226,7 @@ const calculateKnockoutStageFixtures = (
           case 'semis':
             return {
               stage,
+              order: (typeof team1 === 'number' || typeof team2 === 'number') ? 1 : 0,
               allottedTime: slackLookup[progression],
               // some teams may automatically qualify
               team1: typeof team1 === 'number'
@@ -234,6 +240,7 @@ const calculateKnockoutStageFixtures = (
           case 'bronze':
             return {
               stage,
+              order: 2,
               allottedTime: slackLookup[progression],
               team1: calcType('semis', team1, 2), // `~semis:${team1}/p:2`,
               team2: calcType('semis', team2, 2), // `~semis:${team2}/p:2`,
@@ -242,6 +249,7 @@ const calculateKnockoutStageFixtures = (
           case 'finals':
             return {
               stage,
+              order: 2,
               allottedTime: slackLookup[progression],
               team1: calcType('semis', team1, 1), // `~semis:${team1}/p:1`,
               team2: calcType('semis', team2, 1), // `~semis:${team2}/p:1`,
@@ -251,22 +259,22 @@ const calculateKnockoutStageFixtures = (
             throw new Error(`Unknown stage: ${stage}`)
           }
       }
-      const q1 = addMatch(1, 'quarters:1', 1, 8)
-      const q2 = addMatch(2, 'quarters:2', 3, 6)
-      const q3 = addMatch(3, 'quarters:3', 2, 7)
-      const q4 = addMatch(4, 'quarters:4', 4, 5)
+      const q1 = addMatch('quarters:1', 1, 8)
+      const q2 = addMatch('quarters:2', 3, 6)
+      const q3 = addMatch('quarters:3', 2, 7)
+      const q4 = addMatch('quarters:4', 4, 5)
       matches = [
         q1, q2, q3, q4,
-        addMatch(5, 'semis:1', 
+        addMatch('semis:1', 
           q1.autoqual ? q1 : 1, 
           q2.autoqual ? q2 : 2
         ), // quarters 1 vs 2
-        addMatch(6, 'semis:2', 
+        addMatch('semis:2', 
           q3.autoqual ? q3 : 3,
           q4.autoqual ? q4 : 4
         ), // quarters 3 vs 4
-        addMatch(7, 'bronze:1', 1, 2), // semis 1 vs 2
-        addMatch(8, 'finals:1', 1, 2), // semis 3 vs 4
+        addMatch('bronze:1', 1, 2), // semis 1 vs 2
+        addMatch('finals:1', 1, 2), // semis 3 vs 4
       ].filter(x => !x.autoqual).map(x => {
         return {
           ...x,

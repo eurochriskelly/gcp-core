@@ -36,7 +36,7 @@ describe("Useful utility functions", () => {
       "Team 14",
       // exect 3 sub-groups of 3 teams and 2 sub-groups of 4 teams
     ];
-    var result
+    var result 
     result = assignTeamsToGroups(groups);
     expect(result.length).toBe(4)
     expect(result[0].length).toBe(4)
@@ -105,7 +105,7 @@ describe("Knockout stage fixtures", () => {
       groupSizes,
       slack
     );
-    prettyPrintMatches(matches);
+    // prettyPrintMatches(matches);
     expect(matches.length).toBe(4)
     expect(matches[0].stage).toBe('semis:1')
     expect(matches.filter(m => m.stage === 'finals:1').shift().allottedTime).toBe(slack.pop())
@@ -121,7 +121,7 @@ describe("Knockout stage fixtures", () => {
         groupSizes,
         slack
       );
-      prettyPrintMatches(matches)
+      // prettyPrintMatches(matches)
       expect(matches.length).toBe(8)
       const quarters = matches.filter(m => m.stage.startsWith('quarters'))
       expect(quarters.length).toBe(4)
@@ -141,7 +141,7 @@ describe("Knockout stage fixtures", () => {
         groupSizes,
         slack
       );
-      prettyPrintMatches(matches)
+      // prettyPrintMatches(matches)
       expect(matches.length).toBe(6)
       const quarters = matches.filter(m => m.stage.startsWith('quarters'))
       expect(quarters.length).toBe(2)
@@ -161,7 +161,7 @@ describe("Knockout stage fixtures", () => {
         groupSizes,
         slack
       );
-      prettyPrintMatches(matches)
+      // prettyPrintMatches(matches)
       expect(matches.length).toBe(4)
       const quarters = matches.filter(m => m.stage.startsWith('quarters'))
       expect(quarters.length).toBe(0)
