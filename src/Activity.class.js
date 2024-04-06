@@ -9,6 +9,15 @@ class Activity {
     this.pitch = "";
     this.allottedTime = 0;
   }
+  // provide a representation of the activity
+  get repr() {
+    return {
+      type: this.type,
+      startTime: this.startTime,
+      pitch: this.pitch,
+      allottedTime: this.allottedTime,
+    };
+  }
 }
 
 class Break extends Activity {
@@ -27,31 +36,35 @@ class Break extends Activity {
 class Fixture extends Activity {
   constructor(rowData = []) {
     super('fixture');
-    if (rowData.length) {
+    if (Object.keys(rowData).length) {
       this.data = rowData;
     }
   }
   set data(rowData) {
-    const [
+    const {
+      matchId,
       startTime,
       pitch,
       stage,
       category,
-      position,
+      group,
       team1,
       team2,
       umpireTime,
+      allottedTime,
       halfDuration,
-    ] = rowData;
+    } = rowData;
+    this.matchId = matchId;
     this.startTime = startTime;
     this.pitch = pitch;
     this.stage = stage;
     this.category = category;
-    this.position = position;
+    this.position = group;
+    this.umpireTeam = umpireTime;
     this.team1 = team1;
     this.team2 = team2;
-    this.umpireTeam = umpireTime;
     this.halfDuration = halfDuration;
+    this.allottedTime = allottedTime;
   }
   // give back in rows
   get data() {
@@ -87,6 +100,27 @@ class Fixture extends Activity {
       overrides.umpireTeam || "~??",
       overrides.halfDuration || halfDuration,
     ];
+  }
+  get repr() {
+    const strteam = t => {
+      const { type, stage, group, position } = t;
+      if (type === 'calculated') {
+        return `~${stage}:${group}/p:${position}`
+      } else {
+        return t
+      }
+    }
+    return {
+      id: this.matchId,
+      ...super.repr,
+      stage: this.stage,
+      category: this.category,
+      position: this.position,
+      team1: strteam(this.team1),
+      team2: strteam(this.team2),
+      umpireTeam: this.umpireTeam,
+      halfDuration: this.halfDuration,
+    };
   }
 }
 

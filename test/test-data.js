@@ -1,34 +1,37 @@
+const standardRules = {
+  points: {
+    positional: [25, 20, 18, 16, 14, 12, 10, 8, 6, 4, 2, 1], 
+    participation: 2, // automatically receive 2 points for participating
+  },
+  stages: {
+    preliminary: {
+      match: {
+        win: 3,
+        draw: 1,
+        loss: 0,
+      },
+    },
+    elimination: { brackets: ['cup', 'shield', 'plate', 'bowl', 'spoon']},
+  }
+}
+const locAmsterdam = {
+  city: "Amsterdam",
+  address: "",
+  coordinates: [
+    {
+      latitude: 54,
+      longitude: 4,
+    },
+  ],
+}
+
 module.exports = {
   tournaments: {
     t1: {
       tournamentId: 6,
       description: "Benelux round A",
-      rules: {
-        points: {
-          positional: [25, 20, 18, 16, 14, 12, 10, 8, 6, 4, 2, 1], 
-          participation: 2, // automatically receive 2 points for participating
-        },
-        stages: {
-          preliminary: {
-            match: {
-              win: 3,
-              draw: 1,
-              loss: 0,
-            },
-          },
-          elimination: { brackets: ['cup', 'shield', 'plate', 'bowl', 'spoon']},
-        }
-      },
-      location: {
-        city: "Amsterdam",
-        address: "",
-        coordinates: [
-          {
-            latitude: 54,
-            longitude: 4,
-          },
-        ],
-      },
+      rules: standardRules,
+      location: locAmsterdam,
       startDate: "2024-04-01",
       pitches: [
         {
@@ -103,7 +106,7 @@ module.exports = {
           groups: [],
         },
       },
-      fixtures: [],
+      activities: [],
     },
     t2: {
       tournamentId: 7,
@@ -177,10 +180,9 @@ module.exports = {
             },
           },
           groups: [],
-          fixtures: []
         },
       },
-      fixtures: [],
+      activities: [],
     },
     t3: {
       tournamentId: 7,
@@ -253,11 +255,45 @@ module.exports = {
             },
           },
           groups: [],
-          fixtures: []
         },
       },
-      fixtures: [],
+      activities: [],
     },
+    t4: {
+      id: 8,
+      description: "Super simple",
+      rules: standardRules,
+      location: locAmsterdam,
+      startDate: "2024-04-01",
+      pitches: [
+        {
+          name: "Pitch 5",
+          available: {
+            from: "10:00",
+            until: "19:00",
+          },
+        },
+      ],
+      categories: {
+        Mens: {
+          teams: [
+            "Amsterdam A",
+            "Leuven A",
+            "Groningen",
+            "Belgium B",
+          ],
+          rules: {
+            preliminary: {},
+            elimination: {
+              brackets: {
+                cup: 4,
+              }
+            },
+          },
+          groups: [],
+        },
+      },
+    }
   },
   fixtures: {
     f1: [
