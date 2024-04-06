@@ -28,18 +28,15 @@ class TournamentOrganize {
     this.nextFixture = 1;
     // Assign teams to groups 
     const T = this.tournament;
-    T.clearFixtures();
+    T.clearActivities();
     Object.keys(T.categories).forEach(cat => {
       this.assignTeamsToGroups(cat, true);
-      T.fixtures = [
-        ...T.fixtures, 
-        // 2. Generate group stage fixtures
-        ...calculateGroupStageFixtures(
-          cat,
-          T.categories[cat].groups,
-          [0, 0, 60, 40, 25, 20, 15]
-        )
-      ]
+      const fixtures = calculateGroupStageFixtures(
+        cat,
+        T.categories[cat].groups,
+        [0, 0, 60, 40, 25, 20, 15]
+      )
+      T.fixturesAppend(fixtures);
     });
     T.updateLetters();
 
@@ -47,16 +44,13 @@ class TournamentOrganize {
 
     Object.keys(T.categories).forEach(cat => {
       const knockoutFixtures = this.generateKnockoutFixtures(cat, T.groupSizes[cat]);
-      T.fixtures = [
-        ...T.fixtures,
-        ...knockoutFixtures,
-      ]
+      T.fixturesAppend(knockoutFixtures);
       this.orderKnockoutStageFixtures(cat);
     });
 
     T.updateLetters();
     // for each category in categories generate group fixtures
-    // T.prettyPrintFixtures(f => f.category === 'Mens' && f.stage !== 'group');
+    // T.prettyPrintActivities(f => f.category === 'Mens' && f.stage !== 'group');
   }
 
   // 1. Assign teams to groups
@@ -68,9 +62,9 @@ class TournamentOrganize {
 
   orderKnockoutStageFixtures(cat) {
     const T = this.tournament;
-    const catFixtures = T.fixtures.filter(f => f.category === cat && f.stage === 'group')
+    const catFixtures = T.activities.filter(f => f.category === cat && f.stage === 'group')
     const lastOffset = catFixtures.pop().offset; 
-    const catKnockoutFixtures = T.fixtures.filter(f => f.category === cat && f.stage !== 'group')
+    const catKnockoutFixtures = T.activities.filter(f => f.category === cat && f.stage !== 'group')
     // For each non-group fixture, order by idealized order
     // In principle, all brackets can be played in parallel if there are pitches and refs available
     // So we can order by offset
@@ -128,10 +122,10 @@ class TournamentOrganize {
   orderGroupStageFixtures() {
     // order by idealized order (i.e. if each schedule )\
     const T = this.tournament;
-    T.fixtures = T.fixtures.sort((a, b) => {
+    T.activities = T.activities.sort((a, b) => {
       return a.offset > b.offset ? 1 : b.offset > a.offset ? -1 : 0;
     });
-    T.fixtures.forEach(fixture => {
+    T.activities.forEach(fixture => {
       fixture.matchId = this.nextFixture++;
     })
   }

@@ -1,3 +1,5 @@
+const { Fixture, Break } = require('./Activity.class');
+
 class Tournament {
   constructor(tdata) {
     this.tournamentId = 0;
@@ -5,7 +7,7 @@ class Tournament {
     this.startDate = new Date();
     this.pitches = new Set();
     this.categories = [];
-    this.fixtures = [];
+    this.activities = [];
     if (tdata) {
       this.load(tdata)
     }
@@ -40,6 +42,12 @@ class Tournament {
         return acc;
       }, {})
   }
+  fixturesAppend(fixtures) {
+    this.activities = [
+      ...this.activities,
+      ...fixtures.map(f => new Fixture(f)),
+    ]
+  }
   addPitch(pitch) {
     this.pitches.add(pitch);
   }
@@ -61,27 +69,22 @@ class Tournament {
     this.assertTeam(team2, category);
     // Find which group team1 is in and replace with team2
     // Find which group team2 is in and replace with team1
-    // Swap all instances of team1 with team2 in fixtures of this cateogry\
+    // Swap all instances of team1 with team2 in fixtures of this cateogry
     // Swap all instances of team2 with team1 in fixtures of this category
   }
-  clearFixtures() {
-    this.fixtures = []
+  clearActivities() {
+    this.activities= []
   }
   addFixture(
-    time,
-    pitch,
-    bracket,
-    stage,
-    category,
-    group,
-    letter1 = '',
-    team1,
-    letter2 = '',
-    team2,
+    type, time, pitch,
+    bracket, stage, category, group,
+    letter1 = '', team1,
+    letter2 = '', team2,
     umpireTeam,
     duration,
   ) {
-    this.fixtures.push([
+    this.activities.push([
+      type,
       time,
       pitch,
       bracket,
@@ -103,18 +106,18 @@ class Tournament {
       startDate,
       pitches,
       categories,
-      fixtures,
+      activities,
     } = tdata;
     this.tournamentId = tournamentId;
     this.description = description;
     this.startDate = startDate;
     this.pitches = new Set(pitches);
     this.categories = categories;
-    this.fixtures = fixtures;
+    this.activities = activities;
   }
   updateLetters() {
     // Update the letters for each fixture
-    this.fixtures.forEach((f, i) => {
+    this.activities.forEach((f, i) => {
       const { team1, team2, category } = f;
       const index1 = this.categories[category].teams.indexOf(team1);
       const index2 = this.categories[category].teams.indexOf(team2);
@@ -125,24 +128,10 @@ class Tournament {
     });
   }
   // OUTPUT
-  prettyPrintFixtures(filter = () => true) {
-    console.table(this.fixtures
+  prettyPrintActivities(filter = () => true) {
+    console.table(this.activities
       .filter(filter)
-      .map(m => {
-        const strteam = t => {
-          const { type, stage, group, position } = t;
-          if (type === 'calculated') {
-            return `~${stage}:${group}/p:${position}`
-          } else {
-            return t
-          }
-        }
-        return {
-          ...m,
-          team1: strteam(m.team1),
-          team2: strteam(m.team2),
-        }
-      }))
+      .map(a => a.repr))
   }
   // ASSERTIONS
   assertCategory(cat) {

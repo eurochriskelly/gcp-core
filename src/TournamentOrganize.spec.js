@@ -1,11 +1,12 @@
 const TEST_DATA = require('../test/test-data');
-const { prettyPrintMatches } = require("../test/test-util");
+const { prettyPrintActivities } = require("../test/test-util");
 const Tournament = require('./Tournament.class')
 const TournamentOrganize = require('./TournamentOrganize.class');
 
 const tournament_1 = TEST_DATA.tournaments["t1"];
 const tournament_2 = TEST_DATA.tournaments["t2"];
 const tournament_3 = TEST_DATA.tournaments["t3"];
+const tournament_4 = TEST_DATA.tournaments["t4"];
 
 describe('TournamentOrganize', () => {
 
@@ -32,11 +33,12 @@ describe('TournamentOrganize', () => {
 
 describe('End to end tournament organization', () => {
 
-  it('completes the definition of a tournament from a minimal rules input', () => {
+  it.only('completes the definition of a tournament from a minimal rules input', () => {
     const T = new Tournament(tournament_1);
     const TO = new TournamentOrganize(T);
     TO.generate();
     expect(true).toBe(true)
+    T.prettyPrintActivities((f, i) => i > 27 && i < 35)
     // expect teams to be placed in groups
     // expect multiple fixtures
     // expect group fixtures to be set out

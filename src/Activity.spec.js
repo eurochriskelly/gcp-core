@@ -1,8 +1,9 @@
 const TEST_DATA = require('../test/test-data');
 
-const Fixture = require("./Fixture.class");
+const { Fixture } = require("./Activity.class");
 
 const fixtures = TEST_DATA.fixtures.f1;
+
 describe("Fixture", () => {
   it("Can create a next fixture given a prior fixture", () => {
     const F = new Fixture()
