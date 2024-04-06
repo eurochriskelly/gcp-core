@@ -1,7 +1,32 @@
 const { calculateNextGameStartTime } = require("./util");
 
-class Fixture {
+class Activity {
+  static reference = 1000;
+  constructor(type) {
+    this.ref = Activity.reference++;
+    this.type = type;
+    this.startTime = "";
+    this.pitch = "";
+    this.allottedTime = 0;
+  }
+}
+
+class Break extends Activity {
+  constructor() {
+    super('break');
+    this.reasonCode = 0;
+    this.note
+  }
+  set reason([code, note]) {
+    // provide a reason for the break
+    this.reasonCode = code;
+    this.note = note;
+  }
+}
+
+class Fixture extends Activity {
   constructor(rowData = []) {
+    super('fixture');
     if (rowData.length) {
       this.data = rowData;
     }
@@ -65,4 +90,7 @@ class Fixture {
   }
 }
 
-module.exports = Fixture;
+module.exports = {
+  Fixture,
+  Break,
+}
