@@ -1,10 +1,9 @@
-const { prettyPrintMatches } = require("../test/test-util");
 const { 
   calculateNextGameStartTime, 
   calculateGroupStageFixtures,
   calculateKnockoutStageFixtures,
   getTeamIds,
-  assignTeamsToGroups 
+  assignTeamsToGroups,
 } = require("./util");
 
 const VERBOSE = false;
@@ -173,4 +172,3 @@ describe("Knockout stage fixtures", () => {
     }
   })
 })
-
