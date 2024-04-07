@@ -38,7 +38,9 @@ describe('End to end tournament organization', () => {
     const TO = new TournamentOrganize(T);
     TO.generate();
     expect(true).toBe(true)
-    T.prettyPrintActivities((f, i) => i > 27 && i < 35)
+    // T.prettyPrintActivities((f, i) => i > 27 && i < 35)
+    // console.log(JSON.stringify(T.activities))
+
     // expect teams to be placed in groups
     // expect multiple fixtures
     // expect group fixtures to be set out

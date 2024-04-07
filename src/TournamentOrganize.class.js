@@ -7,7 +7,12 @@
  * - Calculating fixtures for the knockout stage for each cup in tournament
  * - Scheduling the tournament
  */
-const { assignTeamsToGroups, calculateGroupStageFixtures, calculateKnockoutStageFixtures } = require("./util");
+const { 
+  assignTeamsToGroups,
+  calculateGroupStageFixtures,
+  calculateKnockoutStageFixtures
+} = require("./util");
+const PitchAllocator = require('./PitchAllocator.class');
 
 class TournamentOrganize {
   constructor(T) {
@@ -21,36 +26,47 @@ class TournamentOrganize {
    * 2. [x] Generate group stage fixtures (external function)
    * 3. [x] Order group stage fixtures
    * 4. [x] Generate knockout stage fixtures
-   * 5. [ ] Order knockout stage fixtures
+   * 5. [X] Order knockout stage fixtures
+   * 6  [ ] Assign fixtures to pitches for each category
+   * 7  [ ] Optional: balance pitch allocation
    * 6. [ ] Assign upmires to fixtures
    */
   generate() {
+    const categoryNames = Object.keys(this.tournament.categories);
     this.nextFixture = 1;
     // Assign teams to groups 
     const T = this.tournament;
     T.clearActivities();
-    Object.keys(T.categories).forEach(cat => {
+    const doAssignGroupFixtures = cat => {
       this.assignTeamsToGroups(cat, true);
       const fixtures = calculateGroupStageFixtures(
         cat,
         T.categories[cat].groups,
-        [0, 0, 60, 40, 25, 20, 15]
+        [0, 0, 30, 25, 20, 20, 15]
       )
       T.fixturesAppend(fixtures);
-    });
-    T.updateLetters();
+    }
 
+    // Setup and order group stage fixtures
+    categoryNames.forEach(doAssignGroupFixtures);
     this.orderGroupStageFixtures();
 
-    Object.keys(T.categories).forEach(cat => {
+    // Generate knockout stage fixtures
+    const doAssignKnockoutFixtures = cat => {
       const knockoutFixtures = this.generateKnockoutFixtures(cat, T.groupSizes[cat]);
       T.fixturesAppend(knockoutFixtures);
       this.orderKnockoutStageFixtures(cat);
-    });
+    }
+    categoryNames.forEach(doAssignKnockoutFixtures);
+
+    // Assign pitches to fixtures
+    const PA = new PitchAllocator(T)
+    categoryNames.forEach(cat => PA.allocate(cat));
 
     T.updateLetters();
-    // for each category in categories generate group fixtures
-    // T.prettyPrintActivities(f => f.category === 'Mens' && f.stage !== 'group');
+    // const filt = f => f.category === 'Mens' && f.stage !== 'group'
+    //  T.prettyPrintActivities(filt);
+    console.log(JSON.stringify(T.data))
   }
 
   // 1. Assign teams to groups
