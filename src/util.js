@@ -170,7 +170,9 @@ const calculateKnockoutStageFixtures = (
   const numGroups = groupSizes.length;
   const numTeams = groupSizes.reduce((a, b) => a + b, 0);
   // See doc/knockouts.md for a detailed explanation of the algorithm
-  const calcType = (stage, group, position) => ({ type: 'calculated', stage, group, position});
+  const calcType = (stage, group, position) => ({ 
+    type: 'calculated', stage, group, position
+  });
   switch (numGroups) {
     case 2:
       matches = [
@@ -308,11 +310,11 @@ const getTeamIds = (range, groupSizes) => {
 };
 
 module.exports = {
-  calculateNextGameStartTime,
+  addMinutes,
+  assignTeamsToGroups,
   calculateGroupStageFixtures,
   calculateKnockoutStageFixtures,
+  calculateNextGameStartTime,
   getTeamIds,
-  addMinutes,
   shuffleArray,
-  assignTeamsToGroups,
 };

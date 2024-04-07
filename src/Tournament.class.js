@@ -115,6 +115,9 @@ class Tournament {
     this.categories = categories;
     this.activities = activities;
   }
+  filterActivities(filter) {
+    return this.activities.filter(filter);
+  }
   updateLetters() {
     // Update the letters for each fixture
     this.activities.forEach((f, i) => {

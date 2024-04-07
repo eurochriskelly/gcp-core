@@ -34,7 +34,7 @@ class Break extends Activity {
 }
 
 class Fixture extends Activity {
-  constructor(rowData = []) {
+  constructor(rowData = {}) {
     super('fixture');
     if (Object.keys(rowData).length) {
       this.data = rowData;
@@ -50,6 +50,7 @@ class Fixture extends Activity {
       group,
       team1,
       team2,
+      bracket,
       umpireTime,
       allottedTime,
       halfDuration,
@@ -58,6 +59,7 @@ class Fixture extends Activity {
     this.startTime = startTime;
     this.pitch = pitch;
     this.stage = stage;
+    this.bracket = bracket;
     this.category = category;
     this.position = group;
     this.umpireTeam = umpireTime;
@@ -74,6 +76,7 @@ class Fixture extends Activity {
       this.stage,
       this.category,
       this.position,
+      this.bracket,
       this.team1,
       this.team2,
       this.umpireTeam,
@@ -116,6 +119,7 @@ class Fixture extends Activity {
       stage: this.stage,
       category: this.category,
       position: this.position,
+      bracket: this.bracket,
       team1: strteam(this.team1),
       team2: strteam(this.team2),
       umpireTeam: this.umpireTeam,
