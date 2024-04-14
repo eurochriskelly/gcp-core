@@ -5,6 +5,9 @@
   "main": "lib/index.js",
   "scripts": {
     "test": "jest",
+    "build:esm": "tsc -p tsconfig.esm.json",
+    "build:commonjs": "tsc -p tsconfig.commonjs.json",
+    "build": "npm run build:esm && npm run build:commonjs",
     "test:watch": "jest --watch",
     "test:one": "bash ./scripts/test-one.sh"
   },
@@ -12,7 +15,11 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "jest": "^29.7.0"
+    "jest": "^29.7.0",
+    "@types/node": "^20.12.2",
+    "@types/react": "^18.2.73",
+    "@types/react-dom": "^18.2.23",
+    "typescript": "^5.4.3"
   },
   "dependencies": {
     "js-yaml": "^4.1.0"
