@@ -1,8 +1,14 @@
 const { calculateNextGameStartTime } = require("./util");
 
 class Activity {
+  ref: number;
+  type: string;
+  startTime: string;
+  pitch: string;
+  allottedTime: number;
+
   static reference = 1000;
-  constructor(type) {
+  constructor(type: string) {
     this.ref = Activity.reference++;
     this.type = type;
     this.startTime = "";
@@ -21,12 +27,15 @@ class Activity {
 }
 
 class Break extends Activity {
+  reasonCode: number;
+  note: string;
   constructor() {
     super('break');
     this.reasonCode = 0;
-    this.note
+    this.note = ''
   }
-  set reason([code, note]) {
+  set reason(info: any){
+    const [code, note] = info;
     // provide a reason for the break
     this.reasonCode = code;
     this.note = note;
@@ -34,13 +43,32 @@ class Break extends Activity {
 }
 
 class Fixture extends Activity {
-  constructor(rowData = {}) {
+  matchId: number;
+  stage: string;
+  category: string;
+  position: number;
+  bracket: string;
+  team1: any;
+  team2: any;
+  umpireTeam: any;
+  halfDuration: number;
+
+  constructor(rowData: any = {}) {
     super('fixture');
+    this.matchId = 0;
+    this.stage = '';
+    this.category = '';
+    this.position = 0;
+    this.bracket = '';
+    this.team1 = '';
+    this.team2 = '';
+    this.umpireTeam = '';
+    this.halfDuration = 0;
     if (Object.keys(rowData).length) {
       this.data = rowData;
     }
   }
-  set data(rowData) {
+  set data(rowData: any) {
     const {
       matchId,
       startTime,
@@ -84,7 +112,7 @@ class Fixture extends Activity {
     ];
   }
   // create after on same pitch
-  createAfter(fixPrev, overrides) {
+  createAfter(fixPrev: any, overrides: any) {
     const [startTime, pitch, stage, category, position] = fixPrev;
     const halfDuration = fixPrev.pop();
     if (overrides.pitch && overrides.pitch !== pitch) {
@@ -105,7 +133,7 @@ class Fixture extends Activity {
     ];
   }
   get repr() {
-    const strteam = t => {
+    const strteam = (t: any) => {
       const { type, stage, group, position } = t;
       if (type === 'calculated') {
         return `~${stage}:${group}/p:${position}`
