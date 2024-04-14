@@ -48,4 +48,4 @@ class PitchAllocator {
     };
 }
 
-module.exports = PitchAllocator;
+export default PitchAllocator;

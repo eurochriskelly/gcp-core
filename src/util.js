@@ -1,4 +1,4 @@
-const shuffleArray = (array) => {
+export const shuffleArray = (array) => {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [array[i], array[j]] = [array[j], array[i]];
@@ -11,7 +11,7 @@ const shuffleArray = (array) => {
  * Teams should be distributed as evenly as possible favouring
  * power of 2 numbers of groups.
  */
-const assignTeamsToGroups = (teams, shuffle = false) => {
+export const assignTeamsToGroups = (teams, shuffle = false) => {
   const distributeEntries = (list, numArrays) => {
     const arrays = Array.from({ length: numArrays }, () => []);
     list.forEach((entry, index) => {
@@ -41,7 +41,7 @@ const assignTeamsToGroups = (teams, shuffle = false) => {
   );
 };
 
-const calculateNextGameStartTime = (
+export const calculateNextGameStartTime = (
   start = "10:00",
   halfDuration = 12,
   breakDuration = 5,
@@ -72,7 +72,7 @@ const calculateNextGameStartTime = (
   return `${formattedHours}:${formattedMinutes}`;
 };
 
-const addMinutes = (time, minsToAdd) => {
+export const addMinutes = (time, minsToAdd) => {
   const [hours, minutes] = time.split(":").map(Number);
   let newMinutes = minutes + minsToAdd;
   let newHours = hours + Math.floor(newMinutes / 60);
@@ -91,7 +91,7 @@ const addMinutes = (time, minsToAdd) => {
  * Generate matches for each group by a applying a Berger Table
  * @returns
  */
-const calculateGroupStageFixtures = (
+export const calculateGroupStageFixtures = (
   category, 
   groups,
   slack = [10, 10, 10, 10, 10, 10, 10],
@@ -143,7 +143,7 @@ const calculateGroupStageFixtures = (
 /**
  * Generate matches for a knockout stage
  */
-const calculateKnockoutStageFixtures = (
+export const calculateKnockoutStageFixtures = (
   range, // e.g. [0, 3] for first 4 teams
   groupSizes,
   slack = [15, 20, 30, 50], // eights, quarters, semis, final
@@ -288,7 +288,7 @@ const calculateKnockoutStageFixtures = (
   return matches;
 }
 
-const getTeamIds = (range, groupSizes) => {
+export const getTeamIds = (range, groupSizes) => {
   // Calculate cumulative group sizes to understand group boundaries
   const cumulativeGroupSizes = groupSizes.map((sum => value => sum += value)(0));
 
@@ -309,12 +309,3 @@ const getTeamIds = (range, groupSizes) => {
   return result.map((_, i) => i + 1);
 };
 
-module.exports = {
-  addMinutes,
-  assignTeamsToGroups,
-  calculateGroupStageFixtures,
-  calculateKnockoutStageFixtures,
-  calculateNextGameStartTime,
-  getTeamIds,
-  shuffleArray,
-};

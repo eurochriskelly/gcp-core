@@ -50,4 +50,4 @@ class TournamentSimulator {
     }
 }
 
-module.exports = TournamentSimulator;
+export default TournamentSimulator;

@@ -148,4 +148,4 @@ class TournamentOrganize {
 
 }
 
-module.exports = TournamentOrganize;
+export default TournamentOrganize;
