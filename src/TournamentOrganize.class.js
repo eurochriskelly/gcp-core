@@ -7,12 +7,12 @@
  * - Calculating fixtures for the knockout stage for each cup in tournament
  * - Scheduling the tournament
  */
-const { 
+import { 
   assignTeamsToGroups,
   calculateGroupStageFixtures,
   calculateKnockoutStageFixtures
-} = require("./util");
-const PitchAllocator = require('./PitchAllocator.class');
+} from "./util";
+import PitchAllocator from './PitchAllocator.class';
 
 class TournamentOrganize {
   constructor(T) {

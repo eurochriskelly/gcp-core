@@ -1,4 +1,4 @@
-const { calculateNextGameStartTime } = require("./util");
+import { calculateNextGameStartTime } from "./util";
 
 class Activity {
   ref: number;
@@ -26,7 +26,7 @@ class Activity {
   }
 }
 
-class Break extends Activity {
+export class Break extends Activity {
   reasonCode: number;
   note: string;
   constructor() {
@@ -42,7 +42,7 @@ class Break extends Activity {
   }
 }
 
-class Fixture extends Activity {
+export class Fixture extends Activity {
   matchId: number;
   stage: string;
   category: string;
@@ -156,7 +156,3 @@ class Fixture extends Activity {
   }
 }
 
-module.exports = {
-  Fixture,
-  Break,
-}

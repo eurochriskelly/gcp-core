@@ -1,4 +1,4 @@
-const { Fixture, Break } = require('./Activity.class');
+import { Fixture, Break } from './Activity.class';
 
 class Tournament {
   constructor(tdata) {
