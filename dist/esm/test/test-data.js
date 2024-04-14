@@ -112,7 +112,7 @@ const testdata = {
         },
         t2: {
             tournamentId: 7,
-            description: "Benelux round A",
+            description: "Benelux round B",
             rules: {
                 points: {
                     positional: [25, 20, 18, 16, 14, 12, 10, 8, 6, 4, 2, 1],
@@ -162,7 +162,7 @@ const testdata = {
         },
         t3: {
             tournamentId: 7,
-            description: "Benelux round A",
+            description: "Benelux round C",
             rules: {
                 points: {
                     positional: [25, 20, 18, 16, 14, 12, 10, 8, 6, 4, 2, 1],

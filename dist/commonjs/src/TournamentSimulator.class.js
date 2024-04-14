@@ -1,4 +1,3 @@
-const { addMinutes } = require('./util');
 class TournamentSimulator {
     constructor(stageParameters = []) {
         this.groupLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
