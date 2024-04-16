@@ -92,9 +92,9 @@ export const calculateGroupStageFixtures = (category, groups, slack = [10, 10, 1
                 if (team1 !== null && team2 !== null) { // Skip the dummy team's "match"
                     // FIXME: please use fixtures object
                     groupMatches.push({
-                        matchId: matches.length + 1, // Assuming unique IDs are desired
+                        matchId: matches.length + 1,
                         category,
-                        offset: slack[teams.length - 2] * (round * matchesPerRound + match), // Example offset calculation
+                        offset: slack[teams.length - 2] * (round * matchesPerRound + match),
                         group: groupIndex,
                         stage: 'group',
                         team1: team1,
@@ -148,14 +148,14 @@ groupSizes, slack = [15, 20, 30, 50]) => {
                     stage: 'semis:1',
                     order: 0,
                     allottedTime: slackLookup.semis,
-                    team1: calcType('group', 1, 1), // "Winner of Group 1"{
+                    team1: calcType('group', 1, 1),
                     team2: calcType('group', 3, 1), // "Winner of Group 2"
                 },
                 {
                     stage: 'semis:2',
                     order: 0,
                     allottedTime: slackLookup.semis,
-                    team1: calcType('group', 2, 1), // "~group:2/p:1", // "Winner of Group 2"
+                    team1: calcType('group', 2, 1),
                     team2: calcType('group', 4, 1), // "~group:4/p:1", // "Winner of Group 4"
                 },
                 {
@@ -213,7 +213,7 @@ groupSizes, slack = [15, 20, 30, 50]) => {
                             stage,
                             order: 2,
                             allottedTime: slackLookup[progression],
-                            team1: calcType('semis', team1, 2), // `~semis:${team1}/p:2`,
+                            team1: calcType('semis', team1, 2),
                             team2: calcType('semis', team2, 2), // `~semis:${team2}/p:2`,
                         };
                         break;
@@ -222,7 +222,7 @@ groupSizes, slack = [15, 20, 30, 50]) => {
                             stage,
                             order: 2,
                             allottedTime: slackLookup[progression],
-                            team1: calcType('semis', team1, 1), // `~semis:${team1}/p:1`,
+                            team1: calcType('semis', team1, 1),
                             team2: calcType('semis', team2, 1), // `~semis:${team2}/p:1`,
                         };
                         break;
@@ -236,9 +236,9 @@ groupSizes, slack = [15, 20, 30, 50]) => {
             const q4 = addMatch('quarters:4', 4, 5);
             matches = [
                 q1, q2, q3, q4,
-                addMatch('semis:1', q1.autoqual ? q1 : 1, q2.autoqual ? q2 : 2), // quarters 1 vs 2
-                addMatch('semis:2', q3.autoqual ? q3 : 3, q4.autoqual ? q4 : 4), // quarters 3 vs 4
-                addMatch('bronze:1', 1, 2), // semis 1 vs 2
+                addMatch('semis:1', q1.autoqual ? q1 : 1, q2.autoqual ? q2 : 2),
+                addMatch('semis:2', q3.autoqual ? q3 : 3, q4.autoqual ? q4 : 4),
+                addMatch('bronze:1', 1, 2),
                 addMatch('finals:1', 1, 2), // semis 3 vs 4
             ].filter(x => !x.autoqual).map(x => {
                 return Object.assign(Object.assign({}, x), { groupSize: numTeams });

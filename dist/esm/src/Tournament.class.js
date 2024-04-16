@@ -1,4 +1,4 @@
-import { Fixture, Break } from './Activity.class';
+import { Fixture } from './Activity.class';
 class Tournament {
     constructor(tdata) {
         this.tournamentId = 0;
@@ -18,6 +18,9 @@ class Tournament {
     }
     get categoryNames() {
         return Object.keys(this.categories);
+    }
+    get categoryPairs() {
+        return this.categoryNames.map(name => ({ name, code: name.replace(/[^A-Z0-9]/g, "") }));
     }
     get bracketNames() {
         // get bracket names for each category
@@ -48,6 +51,14 @@ class Tournament {
     }
     removePitch(pitch) {
         this.pitches.delete(pitch);
+    }
+    getTeams(category) {
+        var _a;
+        return (_a = this.categories[category]) === null || _a === void 0 ? void 0 : _a.teams;
+    }
+    getTeamPairs(category) {
+        var _a;
+        return (_a = this.getTeams(category)) === null || _a === void 0 ? void 0 : _a.map((name, code) => ({ name, code }));
     }
     addCategory(category) {
         this.categories[category] = {};

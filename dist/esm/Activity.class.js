@@ -1,5 +1,4 @@
-"use strict";
-const { calculateNextGameStartTime } = require("./util");
+import { calculateNextGameStartTime } from "./util";
 class Activity {
     constructor(type) {
         this.ref = Activity.reference++;
@@ -19,7 +18,7 @@ class Activity {
     }
 }
 Activity.reference = 1000;
-class Break extends Activity {
+export class Break extends Activity {
     constructor() {
         super('break');
         this.reasonCode = 0;
@@ -32,7 +31,7 @@ class Break extends Activity {
         this.note = note;
     }
 }
-class Fixture extends Activity {
+export class Fixture extends Activity {
     constructor(rowData = {}) {
         super('fixture');
         this.matchId = 0;
@@ -110,7 +109,3 @@ class Fixture extends Activity {
         return Object.assign(Object.assign({ id: this.matchId }, super.repr), { stage: this.stage, category: this.category, position: this.position, bracket: this.bracket, team1: strteam(this.team1), team2: strteam(this.team2), umpireTeam: this.umpireTeam, halfDuration: this.halfDuration });
     }
 }
-module.exports = {
-    Fixture,
-    Break,
-};
