@@ -1,9 +1,8 @@
-import { calculateNextGameStartTime } from "./util";
 class Activity {
     constructor(type) {
         this.ref = Activity.reference++;
         this.type = type;
-        this.startTime = "";
+        this.scheduledTime = null;
         this.pitch = "";
         this.allottedTime = 0;
     }
@@ -11,7 +10,7 @@ class Activity {
     get repr() {
         return {
             type: this.type,
-            startTime: this.startTime,
+            scheduledTime: this.scheduledTime,
             pitch: this.pitch,
             allottedTime: this.allottedTime,
         };
@@ -35,77 +34,60 @@ export class Fixture extends Activity {
     constructor(rowData = {}) {
         super('fixture');
         this.matchId = 0;
+        this.scheduledTime = '';
+        this.pitch = '';
         this.stage = '';
         this.category = '';
         this.position = 0;
-        this.bracket = '';
         this.team1 = '';
         this.team2 = '';
         this.umpireTeam = '';
-        this.halfDuration = 0;
+        this.time = {
+            halfDuration: 0,
+            breakDuration: 0,
+            minRest: 0,
+            allotted: 0
+        };
+        this.score1 = { goals: null, points: null };
+        this.score2 = { goals: null, points: null };
         if (Object.keys(rowData).length) {
             this.data = rowData;
         }
     }
     set data(rowData) {
-        const { matchId, startTime, pitch, stage, category, group, team1, team2, bracket, umpireTime, allottedTime, halfDuration, } = rowData;
+        const { matchId, scheduledTime, pitch, stage, category, position, team1, team2, umpireTeam, halfDuration, breakDuration, minRest, allotted, team1Goals, team1Points, team2Goals, team2Points, } = rowData;
         this.matchId = matchId;
-        this.startTime = startTime;
+        this.scheduledTime = scheduledTime;
         this.pitch = pitch;
         this.stage = stage;
-        this.bracket = bracket;
         this.category = category;
-        this.position = group;
-        this.umpireTeam = umpireTime;
+        this.position = position;
         this.team1 = team1;
         this.team2 = team2;
-        this.halfDuration = halfDuration;
-        this.allottedTime = allottedTime;
-    }
-    // give back in rows
-    get data() {
-        return [
-            this.startTime,
-            this.pitch,
-            this.stage,
-            this.category,
-            this.position,
-            this.bracket,
-            this.team1,
-            this.team2,
-            this.umpireTeam,
-            this.halfDuration,
-        ];
-    }
-    // create after on same pitch
-    createAfter(fixPrev, overrides) {
-        const [startTime, pitch, stage, category, position] = fixPrev;
-        const halfDuration = fixPrev.pop();
-        if (overrides.pitch && overrides.pitch !== pitch) {
-            throw new Error(`Next match must be calculated on same pitch as last match! override pitch [${overrides.pitch}] != previous pitch [${pitch}]`);
-        }
-        this.data = [
-            calculateNextGameStartTime(startTime, halfDuration),
-            pitch,
-            overrides.stage || stage,
-            overrides.category || category,
-            overrides.position || position,
-            overrides.team1 || "~??",
-            overrides.team2 || "~??",
-            overrides.umpireTeam || "~??",
-            overrides.halfDuration || halfDuration,
-        ];
+        this.umpireTeam = umpireTeam;
+        this.time = {
+            halfDuration,
+            breakDuration,
+            minRest,
+            allotted
+        };
+        this.score1 = { goals: team1Goals, points: team1Points };
+        this.score2 = { goals: team2Goals, points: team2Points };
     }
     get repr() {
-        const strteam = (t) => {
-            const { type, stage, group, position } = t;
-            if (type === 'calculated') {
-                return `~${stage}:${group}/p:${position}`;
-            }
-            else {
-                return t;
-            }
+        return {
+            matchId: this.matchId,
+            scheduledTime: this.scheduledTime,
+            pitch: this.pitch,
+            category: this.category,
+            stage: this.stage,
+            position: this.position,
+            time: this.time,
+            team1: this.team1,
+            score1: this.score1,
+            team2: this.team2,
+            score2: this.score2,
+            umpireTeam: this.umpireTeam,
         };
-        return Object.assign(Object.assign({ id: this.matchId }, super.repr), { stage: this.stage, category: this.category, position: this.position, bracket: this.bracket, team1: strteam(this.team1), team2: strteam(this.team2), umpireTeam: this.umpireTeam, halfDuration: this.halfDuration });
     }
 }

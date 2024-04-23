@@ -67,7 +67,6 @@ class TournamentOrganize {
     T.updateLetters();
     // const filt = f => f.category === 'Mens' && f.stage !== 'group'
     //  T.prettyPrintActivities(filt);
-    console.log(JSON.stringify(T.data))
   }
 
   // 1. Assign teams to groups

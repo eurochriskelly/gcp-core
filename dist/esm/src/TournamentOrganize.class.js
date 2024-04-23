@@ -6,6 +6,7 @@
  * - Swapping teams around to better fit travel schedule for teams
  * - Calculating fixtures for the knockout stage for each cup in tournament
  * - Scheduling the tournament
+ *
  */
 import { assignTeamsToGroups, calculateGroupStageFixtures, calculateKnockoutStageFixtures } from "./util";
 import PitchAllocator from './PitchAllocator.class';
@@ -52,7 +53,6 @@ class TournamentOrganize {
         T.updateLetters();
         // const filt = f => f.category === 'Mens' && f.stage !== 'group'
         //  T.prettyPrintActivities(filt);
-        console.log(JSON.stringify(T.data));
     }
     // 1. Assign teams to groups
     assignTeamsToGroups(category, randomize = false) {

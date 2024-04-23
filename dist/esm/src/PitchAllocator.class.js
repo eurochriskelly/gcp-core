@@ -1,4 +1,4 @@
-const { addMinutes } = require('./util');
+import { addMinutes } from './util';
 class Pitch {
     constructor(name, availability) {
         this.name = name;
@@ -24,7 +24,6 @@ class PitchAllocator {
      * Allocate fixtures to available pitches
      */
     allocate(category) {
-        debugger;
         const { pitches, categories } = this.tournament;
         const catPitches = categories[category].pitches;
         this.pitches = [...pitches]
@@ -35,7 +34,7 @@ class PitchAllocator {
             .forEach(match => {
             const pitch = this.nextAvailablePitch();
             match.pitch = pitch.name;
-            match.startTime = pitch.nextAvailableSlot;
+            match.scheduledTime = pitch.nextAvailableSlot;
             const time = pitch.nextAvailableSlot.split('T').pop().substring(0, 5);
             const nextSlot = `${this.tournament.startDate}T${addMinutes(time, match.allottedTime)}:00`;
             pitch.nextAvailableSlot = nextSlot;
