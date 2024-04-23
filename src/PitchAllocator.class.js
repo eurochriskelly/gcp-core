@@ -1,4 +1,4 @@
-const { addMinutes } = require('./util');
+import { addMinutes } from './util';
 
 class Pitch {
     constructor(name, availability) {
