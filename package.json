@@ -8,7 +8,8 @@
     "build:esm": "tsc -p tsconfig.esm.json",
     "build:commonjs": "tsc -p tsconfig.commonjs.json",
     "build": "npm run build:esm && npm run build:commonjs",
-    "test": "jest",
+    "test:summary": "jest --silent",
+    "test:fail": "jest --onlyFailures",
     "test:watch": "jest --watch",
     "test:one": "bash ./scripts/test-one.sh"
   },
@@ -16,6 +17,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/jest": "^29.5.12",
     "@types/node": "^20.12.2",
     "@types/react": "^18.2.73",
     "@types/react-dom": "^18.2.23",

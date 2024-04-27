@@ -1,16 +1,16 @@
 module.exports = {
     preset: 'ts-jest',
     testEnvironment: 'node',
-    roots: ['src/'], // Look here for files to test
+    roots: ['src/'],
     transform: {
-        '^.+\\.ts$': 'ts-jest', // Use ts-jest to process TypeScript files
+        '^.+\\.ts$': [
+            'ts-jest',
+            {
+                tsconfig: 'tsconfig.json' // Specify your TypeScript config file here
+            }
+        ]
     },
     moduleNameMapper: {
-        '^@/(.*)$': '<rootDir>/src/$1', // Map src aliases if you use any
-    },
-    globals: {
-        'ts-jest': {
-            tsconfig: 'tsconfig.json' // Path to your TypeScript configuration
-        }
+        '^@/(.*)$': '<rootDir>/src/$1', // Resolve src aliases if you use any
     }
 };
