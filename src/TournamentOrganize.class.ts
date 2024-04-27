@@ -55,6 +55,7 @@ class TournamentOrganize {
     // Generate knockout stage fixtures
     const doAssignKnockoutFixtures = cat => {
       const knockoutFixtures = this.generateKnockoutFixtures(cat, T.groupSizes[cat]);
+      console.log('iii', knockoutFixtures.slice(0, 9))
       T.fixturesAppend(knockoutFixtures);
       this.orderKnockoutStageFixtures(cat);
     }

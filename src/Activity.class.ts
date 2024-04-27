@@ -7,7 +7,7 @@ class Activity {
   pitch: string;
   allottedTime: number;
 
-  static reference = 1000;
+  static reference = 100;
   constructor(type: string) {
     this.ref = Activity.reference++;
     this.type = type;
@@ -34,7 +34,7 @@ export class Break extends Activity {
     this.reasonCode = 0;
     this.note = ''
   }
-  set reason(info: any){
+  set reason(info: any) {
     const [code, note] = info;
     // provide a reason for the break
     this.reasonCode = code;
@@ -47,6 +47,7 @@ export class Fixture extends Activity {
   matchId: number;
   scheduledTime: string; // Renamed from startTime
   pitch: string;
+  bracket: string;
   category: string;
   stage: string;
   position: number;
@@ -68,6 +69,7 @@ export class Fixture extends Activity {
     this.scheduledTime = '';
     this.pitch = '';
     this.stage = '';
+    this.bracket = '';
     this.category = '';
     this.position = 0;
     this.team1 = '';
@@ -94,6 +96,7 @@ export class Fixture extends Activity {
       pitch,
       stage,
       category,
+      bracket,
       position,
       team1,
       team2,
@@ -113,6 +116,7 @@ export class Fixture extends Activity {
     this.pitch = pitch;
     this.stage = stage;
     this.category = category;
+    this.bracket = bracket;
     this.position = position;
     this.team1 = team1;
     this.team2 = team2;

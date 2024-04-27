@@ -6,7 +6,7 @@ class Tournament<ITournament> {
   tournamentId: number
   description: string
   startDate: Date
-  pitches: string[]
+  pitches: Set<string>
   categories: string[]
   activities: any[]
 
