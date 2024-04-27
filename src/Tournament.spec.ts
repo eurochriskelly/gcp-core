@@ -1,7 +1,8 @@
-const TEST_DATA = require('../test/test-data');
+import TEST_DATA from '../test/test-data';
 
-const Tournament = require("./Tournament.class");
-const TournamentOrganize = require('./TournamentOrganize.class');
+import Tournament from "./Tournament.class";
+import TournamentOrganize from './TournamentOrganize.class';
+
 const tournament_1 = TEST_DATA.tournaments["t1"];
 
 describe("Tournament", () => {

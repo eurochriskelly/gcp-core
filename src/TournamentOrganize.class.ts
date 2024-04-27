@@ -1,3 +1,4 @@
+import { ITournament } from "../types";
 /**
  * This class takes care of organizing a Tournament
  * It's duties include:
@@ -16,7 +17,9 @@ import {
 import PitchAllocator from './PitchAllocator.class';
 
 class TournamentOrganize {
-  constructor(T) {
+  tournament: ITournament;
+  nextFixture: number;
+  constructor(T: ITournament) {
     this.tournament = T;
     this.nextFixture = 1;
   }
@@ -38,7 +41,7 @@ class TournamentOrganize {
     // Assign teams to groups 
     const T = this.tournament;
     T.clearActivities();
-    const doAssignGroupFixtures = cat => {
+    const doAssignGroupFixtures = (cat: string) => {
       this.assignTeamsToGroups(cat, true);
       const fixtures = calculateGroupStageFixtures(
         cat,
@@ -53,8 +56,9 @@ class TournamentOrganize {
     this.orderGroupStageFixtures();
 
     // Generate knockout stage fixtures
-    const doAssignKnockoutFixtures = cat => {
+    const doAssignKnockoutFixtures = (cat: string) => {
       const knockoutFixtures = this.generateKnockoutFixtures(cat, T.groupSizes[cat]);
+      console.log('iii', knockoutFixtures.slice(0, 9))
       T.fixturesAppend(knockoutFixtures);
       this.orderKnockoutStageFixtures(cat);
     }
@@ -70,13 +74,13 @@ class TournamentOrganize {
   }
 
   // 1. Assign teams to groups
-  assignTeamsToGroups(category, randomize = false) {
+  assignTeamsToGroups(category: string, randomize = false) {
     const T = this.tournament;
     const { teams } = T.categories[category];
     T.categories[category].groups = assignTeamsToGroups(teams, randomize);
   }
 
-  orderKnockoutStageFixtures(cat) {
+  orderKnockoutStageFixtures(cat: string) {
     const T = this.tournament;
     const catFixtures = T.activities.filter(f => f.category === cat && f.stage === 'group')
     const lastOffset = catFixtures.pop().offset; 
@@ -84,7 +88,7 @@ class TournamentOrganize {
     // For each non-group fixture, order by idealized order
     // In principle, all brackets can be played in parallel if there are pitches and refs available
     // So we can order by offset
-    T.bracketNames[cat].forEach(bracket => {
+    T.bracketNames[cat].forEach((bracket: string) => {
       let bracketOffset = 0;
       const bracketFixtures = catKnockoutFixtures.filter(f => f.bracket === bracket)
       const seenOrders = [...(new Set(bracketFixtures.map(f => f.order)))]
@@ -101,20 +105,20 @@ class TournamentOrganize {
     })
   }
 
-  generateKnockoutFixtures(cat, groupSizes) {
+  generateKnockoutFixtures(cat: string, groupSizes: number[]) {
     const T = this.tournament;
-    let matches = [];
-    const { brackets } = T.categories[cat].rules.elimination;
+    let matches: any = [];
+    const brackets: any = T.categories[cat]?.rules?.elimination?.brackets
     const elimSlack = [ 30, 35, 40, 45 ];
     let bracketCursor = 0;
     const bracketNames = Object.keys(brackets);
     bracketNames.forEach(bracket => {
       let bracketMatches = [];
       // determine the number of teams in the bracket
-      const numTeams = brackets[bracket];
+      const numTeams: any = brackets[bracket];
       const range = [bracketCursor, bracketCursor + numTeams - 1]
       bracketCursor += numTeams;
-      const enhance = match => {
+      const enhance = (match: any) => {
         const [stage, group] = match.stage.split(':')
         return {
           matchId: this.nextFixture++,

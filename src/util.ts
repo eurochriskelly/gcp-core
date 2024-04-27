@@ -1,4 +1,6 @@
-export const shuffleArray = (array) => {
+import { IFixture } from '../types';
+
+export const shuffleArray = (array: string[]): string[] => {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [array[i], array[j]] = [array[j], array[i]];
@@ -11,10 +13,10 @@ export const shuffleArray = (array) => {
  * Teams should be distributed as evenly as possible favouring
  * power of 2 numbers of groups.
  */
-export const assignTeamsToGroups = (teams, shuffle = false) => {
-  const distributeEntries = (list, numArrays) => {
-    const arrays = Array.from({ length: numArrays }, () => []);
-    list.forEach((entry, index) => {
+export const assignTeamsToGroups = (teams: string[], shuffle = false) => {
+  const distributeEntries = (list: string[], numArrays: number) => {
+    const arrays = Array.from({ length: numArrays }, (): string[] => []);
+    list.forEach((entry: string, index) => {
       const arrayIndex = index % numArrays;
       arrays[arrayIndex].push(entry);
     });
@@ -72,7 +74,7 @@ export const calculateNextGameStartTime = (
   return `${formattedHours}:${formattedMinutes}`;
 };
 
-export const addMinutes = (time, minsToAdd) => {
+export const addMinutes = (time: string, minsToAdd: number) => {
   const [hours, minutes] = time.split(":").map(Number);
   let newMinutes = minutes + minsToAdd;
   let newHours = hours + Math.floor(newMinutes / 60);
@@ -92,18 +94,18 @@ export const addMinutes = (time, minsToAdd) => {
  * @returns
  */
 export const calculateGroupStageFixtures = (
-  category, 
-  groups,
+  category: string, 
+  groups: string[][],
   slack = [10, 10, 10, 10, 10, 10, 10],
   shuffle = false
 ) => {
-  let matches = [];
+  let matches: any[] = [];
   groups.forEach((teams, groupIndex) => {
     if (shuffle) {
       teams = shuffleArray(teams);
     }
     if (teams.length % 2 !== 0) {
-      teams.push(null); // Add a dummy team to make team count even
+      teams.push(''); // Add a dummy team to make team count even
     }
     const totalRounds = teams.length - 1;
     const matchesPerRound = teams.length / 2;
@@ -122,6 +124,7 @@ export const calculateGroupStageFixtures = (
             category,
             offset: slack[teams.length - 2] * (round * matchesPerRound + match), // Example offset calculation
             group: groupIndex,
+            position: groupIndex,
             stage: 'group',
             team1: team1,
             team2: team2,
@@ -144,8 +147,8 @@ export const calculateGroupStageFixtures = (
  * Generate matches for a knockout stage
  */
 export const calculateKnockoutStageFixtures = (
-  range, // e.g. [0, 3] for first 4 teams
-  groupSizes,
+  range: number[], // e.g. [0, 3] for first 4 teams
+  groupSizes: number[],
   slack = [15, 20, 30, 50], // eights, quarters, semis, final
 ) => {
   /*
@@ -166,11 +169,11 @@ export const calculateKnockoutStageFixtures = (
     bronze: slack[2],
     finals: slack[3],
   }
-  let matches = [];
+  let matches: any[] = [];
   const numGroups = groupSizes.length;
   const numTeams = groupSizes.reduce((a, b) => a + b, 0);
   // See doc/knockouts.md for a detailed explanation of the algorithm
-  const calcType = (stage, group, position) => ({ 
+  const calcType = (stage: string, group: number, position: number) => ({ 
     type: 'calculated', stage, group, position
   });
   switch (numGroups) {
@@ -178,6 +181,7 @@ export const calculateKnockoutStageFixtures = (
       matches = [
         {
           stage: 'semis:1',
+          position: 1,
           order: 0,
           allottedTime: slackLookup.semis,
           team1: calcType('group', 1, 1), // "Winner of Group 1"{
@@ -185,6 +189,7 @@ export const calculateKnockoutStageFixtures = (
         },
         {
           stage: 'semis:2',
+          position: 2,
           order: 0,
           allottedTime: slackLookup.semis,
           team1: calcType('group', 2, 1), // "~group:2/p:1", // "Winner of Group 2"
@@ -192,6 +197,7 @@ export const calculateKnockoutStageFixtures = (
         },
         {
           stage: 'bronze:1',
+          position: 1,
           order: 1,
           allottedTime: slackLookup.bronze,
           team1: calcType('semis', 1, 2),
@@ -199,6 +205,7 @@ export const calculateKnockoutStageFixtures = (
         },
         {
           stage: 'finals:1',
+          position: 1,
           order: 1,
           allottedTime: slackLookup.finals,
           team1: calcType('semis', 1, 1),
@@ -209,13 +216,16 @@ export const calculateKnockoutStageFixtures = (
     // TODO: 8 is usually not exactly 8 teams because its the last bracket in a blitz
     case 4:
       const teamIds = getTeamIds(range, groupSizes);
-      const addMatch = (stage, team1, team2 ) => {
-        const progression = stage.split(':').shift()
+      const addMatch = (stage: string, team1: any, team2: any) => {
+        const parts = stage.split(':')
+        const progression = parts[0]
+        const position = parts[1]
         switch (progression) {
           case 'quarters':
             if (teamIds.includes(team1) && teamIds.includes(team2)) {
               return {
                 stage,
+                position,
                 order: 0,
                 allottedTime: slackLookup[progression],
                 team1: calcType('group', team1, 1), 
@@ -228,6 +238,7 @@ export const calculateKnockoutStageFixtures = (
           case 'semis':
             return {
               stage,
+              position,
               order: (typeof team1 === 'number' || typeof team2 === 'number') ? 1 : 0,
               allottedTime: slackLookup[progression],
               // some teams may automatically qualify
@@ -242,6 +253,7 @@ export const calculateKnockoutStageFixtures = (
           case 'bronze':
             return {
               stage,
+              position,
               order: 2,
               allottedTime: slackLookup[progression],
               team1: calcType('semis', team1, 2), // `~semis:${team1}/p:2`,
@@ -251,6 +263,7 @@ export const calculateKnockoutStageFixtures = (
           case 'finals':
             return {
               stage,
+              position,
               order: 2,
               allottedTime: slackLookup[progression],
               team1: calcType('semis', team1, 1), // `~semis:${team1}/p:1`,
@@ -288,7 +301,7 @@ export const calculateKnockoutStageFixtures = (
   return matches;
 }
 
-export const getTeamIds = (range, groupSizes) => {
+export const getTeamIds = (range: number[], groupSizes: number[]) => {
   // Calculate cumulative group sizes to understand group boundaries
   const cumulativeGroupSizes = groupSizes.map((sum => value => sum += value)(0));
 

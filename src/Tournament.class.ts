@@ -1,21 +1,22 @@
 import { Fixture, Break } from './Activity.class';
-import { ITournament } from '../types';
-import { connected } from 'process';
+import { ITournament, IPitch, ICategory, IFixture, IFixProps } from '../types';
 
-class Tournament<ITournament> {
-  tournamentId: number
-  description: string
-  startDate: Date
-  pitches: string[]
-  categories: string[]
+class Tournament implements ITournament {
+  tournamentId: number;
+  description: string;
+  startDate: Date;
+  pitches: IPitch[];
+  categories: {
+    [key: string]: ICategory;
+  };
   activities: any[]
 
-  constructor(tdata: any) {
+  constructor(tdata?: any) {
     this.tournamentId = 0;
     this.description = "New tournament";
     this.startDate = new Date();
-    this.pitches = new Set();
-    this.categories = [];
+    this.pitches = [];
+    this.categories = {};
     this.activities = [];
     if (tdata) {
       this.load(tdata)
@@ -30,7 +31,7 @@ class Tournament<ITournament> {
     data.isValid = true; // TODO: validateFixtures(data)
     return data;
   }
-  get categoryNames() {
+  get categoryNames(): string[] {
     return Object.keys(this.categories);
   }
   get categoryPairs() {
@@ -38,53 +39,70 @@ class Tournament<ITournament> {
   }
   get bracketNames() {
     // get bracket names for each category
+    interface BracketNames {
+      [category: string]: string[]
+    }
     return this.categoryNames
-      .map(cat => [cat, Object.keys(this.categories[cat].rules.elimination.brackets)])
-      .reduce((acc, [cat, brackets]) => {
+      .map((cat: any) => [cat, Object.keys(this.categories[cat].rules.elimination.brackets)])
+      .reduce((acc: BracketNames, [cat, brackets]) => {
         acc[cat] = brackets;
         return acc;
       }, {});
   }
   get groupSizes() {
     // get group sizes for each category
+    interface GroupSize {
+      [category: string]: string[]
+    }
     return this.categoryNames
-      .map(cat => [cat, this.categories[cat].groups.map(g => g.length)])
-      .reduce((acc, [cat, sizes]) => {
+      .map((cat: any) => [cat, this.categories[cat].groups.map(g => g.length)])
+      .reduce((acc: GroupSize, [cat, sizes]) => {
         acc[cat] = sizes;
         return acc;
       }, {})
   }
-  fixturesAppend(fixtures) {
+  fixturesAppend(fixtures: IFixProps[]) {
     this.activities = [
       ...this.activities,
       ...fixtures.map(f => new Fixture(f)),
     ]
   }
-  addPitch(pitch) {
-    this.pitches.add(pitch);
+  addPitch(pitch: IPitch) {
+    this.pitches.push(pitch);
   }
-  removePitch(pitch) {
-    this.pitches.delete(pitch);
+  removePitch(pitch: IPitch) {
+    // remove this pitch by name from the list 
+    this.pitches = this.pitches.filter(p => p.name !== pitch.name);
   }
-  getTeams(category) {
+  getTeams(category: string) {
     return this.categories[category]?.teams;
   }
-  getTeamPairs(category) {
+  getTeamPairs(category: string) {
     return this.getTeams(category)?.map((name, code) => ({ name, code }));
   }
-  addCategory(category) {
-    this.categories[category] = {};
+  addCategory(category: string) {
+    this.categories[category] = {
+      teams: [],
+      pitches: [],
+      rules: {
+        preliminary: {},
+        elimination: {
+          brackets: {},
+        },
+      },
+      groups: [],
+    };
   }
-  addTeam(teamName, category, group = 0) {
+  addTeam(teamName: string, category: string) {
     // groups must be positive integers
-    this.assertCategory(category, this.categoryNames);
+    this.assertCategory(category);
     this.assertTeamIsNew(teamName, category);
     this.categories[category].teams.push(teamName)
   }
-  swapTeams(team1, team2, category) {
+  swapTeams(team1: string, team2: string, category: string) {
     this.assertCategory(category);
-    this.assertTeam(team1, category);
-    this.assertTeam(team2, category);
+    this.assertTeamExists(team1, category);
+    this.assertTeamExists(team2, category);
     // Find which group team1 is in and replace with team2
     // Find which group team2 is in and replace with team1
     // Swap all instances of team1 with team2 in fixtures of this cateogry
@@ -93,31 +111,10 @@ class Tournament<ITournament> {
   clearActivities() {
     this.activities= []
   }
-  addFixture(
-    type, time, pitch,
-    bracket, stage, category, group,
-    letter1 = '', team1,
-    letter2 = '', team2,
-    umpireTeam,
-    duration,
-  ) {
-    this.activities.push([
-      type,
-      time,
-      pitch,
-      bracket,
-      stage,
-      category,
-      group,
-      letter1,
-      team1,
-      letter2,
-      team2,
-      umpireTeam,
-      duration,
-    ]);
+  addFixture(fix: IFixProps) {
+    this.activities.push(fix);
   }
-  load(tdata) {
+  load(tdata: any) {
     const {
       tournamentId,
       description,
@@ -129,11 +126,11 @@ class Tournament<ITournament> {
     this.tournamentId = tournamentId;
     this.description = description;
     this.startDate = startDate;
-    this.pitches = new Set(pitches);
+    this.pitches = pitches;
     this.categories = categories;
     this.activities = activities;
   }
-  filterActivities(filter) {
+  filterActivities(filter: any) {
     return this.activities.filter(filter);
   }
   updateLetters() {
@@ -155,27 +152,27 @@ class Tournament<ITournament> {
       .map(a => a.repr))
   }
   // ASSERTIONS
-  assertCategory(cat) {
+  assertCategory(cat: string) {
     const names = this.categoryNames;
     if (!names.includes(cat)) {
       throw new Error(`Bad category [${cat}]. Possible categories include [${names.join(',')}]`);
     }
   }
-  assertTeamExists(teamName, category) {
+  assertTeamExists(teamName: string, category: string) {
     if (!this.categories[category].teams.includes(teamName)) {
       throw new Error(
         `Team [${teamName}] dows not exist in category [${category}]`,
       );
     }
   }
-  assertTeamIsNew(teamName, category) {
+  assertTeamIsNew(teamName: string, category: string) {
     if (this.categories[category].teams.includes(teamName)) {
       throw new Error(
         `Team [${teamName}] already exists in category [${category}]`,
       );
     }
   }
-  assertGroup(groupNumber, category) {
+  assertGroup(groupNumber: number, category: string) {
     const groupName = `g${groupNumber}`;
     const categoryGroups = this.categories[category];
     if (!(groupName in categoryGroups)) {
