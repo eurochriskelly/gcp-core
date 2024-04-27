@@ -1,7 +1,16 @@
 module.exports = {
-  // This configuration will only run tests in the dist/commonjs folder
-  testMatch: [
-    "**/dist/commonjs/**/?(*.)+(spec|test).[jt]s?(x)"
-  ],
-  // Add other Jest configurations as needed
+    preset: 'ts-jest',
+    testEnvironment: 'node',
+    roots: ['src/'], // Look here for files to test
+    transform: {
+        '^.+\\.ts$': 'ts-jest', // Use ts-jest to process TypeScript files
+    },
+    moduleNameMapper: {
+        '^@/(.*)$': '<rootDir>/src/$1', // Map src aliases if you use any
+    },
+    globals: {
+        'ts-jest': {
+            tsconfig: 'tsconfig.json' // Path to your TypeScript configuration
+        }
+    }
 };
