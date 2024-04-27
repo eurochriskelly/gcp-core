@@ -24,6 +24,7 @@ export interface IFixture {
   pitch: string;
   category: string;
   stage: string;
+  bracket: string;
   position: number;
   time: {
     halfDuration: number;
