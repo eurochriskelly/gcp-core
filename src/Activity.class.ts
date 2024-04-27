@@ -1,4 +1,4 @@
-import { calculateNextGameStartTime } from "./util";
+import { IFixProps, IFixture } from "../types";
 
 class Activity {
   ref: number;
@@ -16,13 +16,13 @@ class Activity {
     this.allottedTime = 0;
   }
   // provide a representation of the activity
-  get repr() {
-    return {
+  get repr(): string {
+    return JSON.stringify({
       type: this.type,
       scheduledTime: this.scheduledTime,
       pitch: this.pitch,
       allottedTime: this.allottedTime,
-    };
+    });
   }
 }
 
@@ -42,8 +42,7 @@ export class Break extends Activity {
   }
 }
 
-
-export class Fixture extends Activity {
+export class Fixture extends Activity implements IFixture {
   matchId: number;
   scheduledTime: string; // Renamed from startTime
   pitch: string;
@@ -58,12 +57,14 @@ export class Fixture extends Activity {
     allotted: number;
   };
   team1: string;
+  letter1?: string | undefined;
   score1: { goals: number | null; points: number | null; }; // New structure for team1 score
   team2: string;
+  letter2?: string | undefined;
   score2: { goals: number | null; points: number | null; }; // New structure for team2 score
-  umpireTeam?: string; // Optional field
+  umpireTeam?: string; // can be optional at first
 
-  constructor(rowData: any = {}) {
+  constructor(rowData: IFixProps) {
     super('fixture');
     this.matchId = 0;
     this.scheduledTime = '';
@@ -73,7 +74,9 @@ export class Fixture extends Activity {
     this.category = '';
     this.position = 0;
     this.team1 = '';
+    this.letter1 = '';
     this.team2 = '';
+    this.letter2 = '';
     this.umpireTeam = '';
     this.time = {
       halfDuration: 0,
@@ -105,10 +108,6 @@ export class Fixture extends Activity {
       breakDuration,
       minRest,
       allotted,
-      team1Goals,
-      team1Points,
-      team2Goals,
-      team2Points,
     } = rowData;
 
     this.matchId = matchId;
@@ -127,12 +126,12 @@ export class Fixture extends Activity {
       minRest,
       allotted
     };
-    this.score1 = { goals: team1Goals, points: team1Points };
-    this.score2 = { goals: team2Goals, points: team2Points };
+    this.score1 = { goals: null, points: null };
+    this.score2 = { goals: null, points: null };
   }
 
-  get repr() {
-    return {
+  get repr(): string {
+    return JSON.stringify({
       matchId: this.matchId,
       scheduledTime: this.scheduledTime,
       pitch: this.pitch,
@@ -145,6 +144,6 @@ export class Fixture extends Activity {
       team2: this.team2,
       score2: this.score2,
       umpireTeam: this.umpireTeam,
-    };
+    });
   }
 }
