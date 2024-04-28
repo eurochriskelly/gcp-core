@@ -23,11 +23,9 @@ categories:
     g2: ["Belgium A", "Amsterdam A"]
   Ladies:
     g1: ["Amsterdam A", "Amsterdam B", "Earls of Brussels"]
-schedule:
-  headings: ["startTime", "pitch", "stage", "category", "group", "Team1", "Team2", "UmpireTeam", "Duration"]
-  fixtures:
-    - ["10:30", "p1", "group", "Mens", "g1", "Amsterdam A", "Amsterdam B", "Leuven A", 15]
-    - ["11:00", "p1", "group", "Ladies", "g1", "Amsterdam B", "Earls of Brussels", "Amsterdam A", 12]
+activities:
+  - ["10:30", "p1", "group", "Mens", "g1", "Amsterdam A", "Amsterdam B", "Leuven A", 15]
+  - ["11:00", "p1", "group", "Ladies", "g1", "Amsterdam B", "Earls of Brussels", "Amsterdam A", 12]
 `,
     'bad pitch': `
 pitches: ["p1"]

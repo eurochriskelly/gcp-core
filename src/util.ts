@@ -1,6 +1,8 @@
 import { IFixture } from '../types';
 
-export const shuffleArray = (array: string[]): string[] => {
+type ArrStrNull = (string | null)[];
+
+export const shuffleArray = (array: ArrStrNull): ArrStrNull => {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [array[i], array[j]] = [array[j], array[i]];
@@ -13,10 +15,10 @@ export const shuffleArray = (array: string[]): string[] => {
  * Teams should be distributed as evenly as possible favouring
  * power of 2 numbers of groups.
  */
-export const assignTeamsToGroups = (teams: string[], shuffle = false) => {
-  const distributeEntries = (list: string[], numArrays: number) => {
-    const arrays = Array.from({ length: numArrays }, (): string[] => []);
-    list.forEach((entry: string, index) => {
+export const assignTeamsToGroups = (teams: ArrStrNull, shuffle = false) => {
+  const distributeEntries = (list: ArrStrNull, numArrays: number) => {
+    const arrays = Array.from({ length: numArrays }, (): ArrStrNull => []);
+    list.forEach((entry: (string|null), index) => {
       const arrayIndex = index % numArrays;
       arrays[arrayIndex].push(entry);
     });
@@ -95,17 +97,18 @@ export const addMinutes = (time: string, minsToAdd: number) => {
  */
 export const calculateGroupStageFixtures = (
   category: string, 
-  groups: string[][],
+  groups: (string | null)[][],
   slack = [10, 10, 10, 10, 10, 10, 10],
   shuffle = false
 ) => {
   let matches: any[] = [];
+  let matchId = 1001;
   groups.forEach((teams, groupIndex) => {
     if (shuffle) {
       teams = shuffleArray(teams);
     }
     if (teams.length % 2 !== 0) {
-      teams.push(''); // Add a dummy team to make team count even
+      teams.push(null); // Add a dummy team to make team count even
     }
     const totalRounds = teams.length - 1;
     const matchesPerRound = teams.length / 2;
@@ -120,7 +123,7 @@ export const calculateGroupStageFixtures = (
         if (team1 !== null && team2 !== null) { // Skip the dummy team's "match"
           // FIXME: please use fixtures object
           groupMatches.push({
-            matchId: matches.length + 1, // Assuming unique IDs are desired
+            matchId,
             category,
             offset: slack[teams.length - 2] * (round * matchesPerRound + match), // Example offset calculation
             group: groupIndex,
@@ -130,6 +133,7 @@ export const calculateGroupStageFixtures = (
             team2: team2,
             allottedTime: slack[teams.length - 2],
           });
+          matchId++;
         }
       }
       // Rotate teams for the next round, keeping the first team fixed

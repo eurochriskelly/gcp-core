@@ -1,45 +1,25 @@
-const validateFixtures = (data, issues) => {
-    const isValid = checkFixtureSize(data, issues) && checkKeys(data, issues) && checkTeams(data, issues) && checkPitches(data, issues)
-    return isValid
+import { ITournament } from "../types"
+
+const { ITournament } = require('../types')
+
+export const validateFixtures = (data: any, issues: string[]) => {
+    const valid = checkKeys(data, issues)
+    return valid
 }
 
 // Checks
-const checkFixtureSize = (data, issues = []) => {
-    // check that each fixtures has the same number of items as the headings 
-    const headerLength = data.schedule.headings.length
-    return data.schedule.fixtures.every(fixture => {
-        if (fixture.length !== headerLength) {
-            issues.push(`Fixture ${fixture.join(', ')} does not match header length`)
-            return false
-        }
-        return true
-    })
-}
-
-const checkKeys = (data, issues = []) => {
-    const keys = ['tournamentId', 'pitches', 'categories', 'schedule', 'startDate']
-    const missingKeys = keys.filter(key => !data[key])
+export const checkKeys = (data: any, issues: string[] = []) => {
+    const keys = ['tournamentId', 'pitches', 'categories', 'activities']
+    const missingKeys = keys.filter((key: any) => !data[key])
     if (missingKeys.length) {
         issues.push(`Missing keys: ${missingKeys.join(', ')}`)
-        console.log(data)
     }
     return !issues.length
 }
 
-// TODO: Implement the checkStages function
-const checkStages = (data, issues = []) => {
-    // Check that the stages are valid
-    return true
-}
 
-// TODO: Implement the checkSchedule function
-const checkSchedule = (data, issues = []) => {
-    // Check that there is enough time between each match on each pitch to allow for the duration
-    return true
-}
-
-const checkPitches = (data, issues = []) => {
-    return data?.schedule.fixtures.every(fixture => {
+export const checkPitches = (data: any, issues: string[] = []) => {
+    return data?.schedule.fixtures.every((fixture: any) => {
         const [, , pitch] = fixture
         if (!data.pitches.includes(pitch)) {
             issues.push(`Pitch ${pitch} not defined`)
@@ -49,17 +29,9 @@ const checkPitches = (data, issues = []) => {
     })
 }
 
-checkRules = (data, issues = []) => {
-    // TODO: rules must be valid
-
-    // elimination rules
-    // 1. sum of group sizes must be greater than or equal to number of teams
-    // 2. group sizes must be a power of 2
-}
-
-const checkTeams = (data, issues = []) => {
+export const checkTeams = (data: any, issues: string[] = []) => {
     // for each fixture, check that the tema matches the name defined in categories
-    return data?.schedule.fixtures.every(fixture => {
+    return data?.schedule.fixtures.every((fixture: any) => {
         const [, , , , category, group, team1, team2, umpireTeam] = fixture
         const g = 'o' + group
         if (!data.categories[category]) {
@@ -83,14 +55,4 @@ const checkTeams = (data, issues = []) => {
         }
         return !issues.length
     })
-}
-
-module.exports = {
-    validateFixtures,
-    checkSchedule,
-    checkPitches,
-    checkTeams,
-    checkKeys,
-    checkStages,
-    checkFixtureSize,
 }

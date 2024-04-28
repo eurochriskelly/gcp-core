@@ -1,7 +1,6 @@
-const TEST_DATA = require('../test/test-data');
-const { prettyPrintActivities } = require("../test/test-util");
-const Tournament = require('./Tournament.class')
-const TournamentOrganize = require('./TournamentOrganize.class');
+import TEST_DATA from '../test/test-data';
+import Tournament from './Tournament.class';
+import TournamentOrganize from './TournamentOrganize.class';
 
 const tournament_1 = TEST_DATA.tournaments["t1"];
 const tournament_2 = TEST_DATA.tournaments["t2"];
@@ -33,7 +32,7 @@ describe('TournamentOrganize', () => {
 
 describe('End to end tournament organization', () => {
 
-  it.only('completes the definition of a tournament from a minimal rules input', () => {
+  it('completes the definition of a tournament from a minimal rules input', () => {
     const T = new Tournament(tournament_1);
     const TO = new TournamentOrganize(T);
     TO.generate();
