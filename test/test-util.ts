@@ -1,14 +1,22 @@
-module.exports = {
-  prettyPrintMatches,
-}
-
 const VERBOSE = true;
 
-function prettyPrintMatches(matches) {
-  return VERBOSE
-    ? console.table(matches.map(m => {
-      const strteam = t => {
-        const { type, stage, group, position } = t;
+interface IMatch {
+  team1: ITeam;
+  team2: ITeam;
+}
+
+interface ITeam {
+  type: string;
+  stage: string;
+  group: string;
+  position: number;
+}
+
+export function prettyPrintMatches(matches: IMatch[]) {
+  if (VERBOSE) {
+    console.table(matches.map(m => {
+      const strteam = (t: ITeam) => {
+        const { type, stage, group, position }: ITeam = t;
         if (type === 'calculated') {
           return `~${stage}:${group}/p:${position}`
         } else {
@@ -21,5 +29,5 @@ function prettyPrintMatches(matches) {
         team2: strteam(m.team2),
       }
     }))
-    : null;
+  }
 }
