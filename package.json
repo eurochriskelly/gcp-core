@@ -2,7 +2,7 @@
   "name": "gcp-core",
   "version": "1.0.0",
   "description": "",
-  "main": "lib/index.js",
+  "main": "./src/index.ts",
   "scripts": {
     "test": "jest",
     "build:esm": "tsc -p tsconfig.esm.json",
@@ -12,6 +12,12 @@
     "test:fail": "jest --onlyFailures",
     "test:watch": "jest --watch",
     "test:one": "bash ./scripts/test-one.sh"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./types": "./types/index.ts",
+    "./Tournament": "./src/Tournament.class.ts",
+    "./TournamentOrganize": "./src/TournamentOrganize.class.ts"
   },
   "keywords": [],
   "author": "",
