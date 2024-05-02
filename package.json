@@ -6,18 +6,27 @@
   "scripts": {
     "test": "jest",
     "build:esm": "tsc -p tsconfig.esm.json",
-    "build:commonjs": "tsc -p tsconfig.commonjs.json",
-    "build": "npm run build:esm && npm run build:commonjs",
+    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "build": "npm run build:esm && npm run build:cjs",
     "test:summary": "jest --silent",
     "test:fail": "jest --onlyFailures",
     "test:watch": "jest --watch",
     "test:one": "bash ./scripts/test-one.sh"
   },
   "exports": {
-    ".": "./src/index.ts",
+    ".": {
+      "import": "./dist/esm/src/index.js",
+      "require": "./dist/cjs/src/index.js"
+    },
     "./types": "./types/index.ts",
-    "./Tournament": "./src/Tournament.class.ts",
-    "./TournamentOrganize": "./src/TournamentOrganize.class.ts"
+    "./Tournament": {
+      "import": "./dist/esm/src/Tournament.class.js",
+      "require": "./dist/cjs/src/Tournament.class.js"
+    },
+    "./TournamentOrganize": {
+      "import": "./dist/esm/src/TournamentOrganize.class.js",
+      "require": "./dist/cjs/src/TournamentOrganize.class.js"
+    }
   },
   "keywords": [],
   "author": "",

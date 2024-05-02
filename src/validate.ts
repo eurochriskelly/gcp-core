@@ -1,6 +1,4 @@
-import { ITournament } from "../types"
-
-const { ITournament } = require('../types')
+import type { ITournament } from "../types"
 
 export const validateFixtures = (data: any, issues: string[]) => {
     const valid = checkKeys(data, issues)

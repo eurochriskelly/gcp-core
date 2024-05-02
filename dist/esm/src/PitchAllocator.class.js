@@ -12,7 +12,7 @@ class PitchAllocator {
         this.pitches = [];
     }
     nextAvailablePitch() {
-        const convertToMs = time => new Date(time).getTime();
+        const convertToMs = (time) => new Date(time).getTime();
         return this.pitches
             .sort((a, b) => {
             const nextA = convertToMs(a.nextAvailableSlot);
@@ -30,13 +30,16 @@ class PitchAllocator {
             .filter((p, i) => catPitches.includes(i))
             .map(p => new Pitch(p.name, p.availability));
         // Loop over each match and try to allocate a match to the next available slot
-        this.tournament.filterActivities(f => f.category === category)
+        this.tournament
+            .filterActivities((f) => f.category === category)
             .forEach(match => {
+            var _a;
             const pitch = this.nextAvailablePitch();
             match.pitch = pitch.name;
             match.scheduledTime = pitch.nextAvailableSlot;
-            const time = pitch.nextAvailableSlot.split('T').pop().substring(0, 5);
-            const nextSlot = `${this.tournament.startDate}T${addMinutes(time, match.allottedTime)}:00`;
+            const time = pitch.nextAvailableSlot
+                .split('T').pop().substring(0, 5);
+            const nextSlot = `${this.tournament.startDate}T${addMinutes(time, (_a = match === null || match === void 0 ? void 0 : match.time) === null || _a === void 0 ? void 0 : _a.allotted)}:00`;
             pitch.nextAvailableSlot = nextSlot;
         });
     }

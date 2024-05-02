@@ -1,4 +1,4 @@
-const standardRules = {
+var standardRules = {
     points: {
         positional: [25, 20, 18, 16, 14, 12, 10, 8, 6, 4, 2, 1],
         participation: 2, // automatically receive 2 points for participating
@@ -14,7 +14,7 @@ const standardRules = {
         elimination: { brackets: ['cup', 'shield', 'plate', 'bowl', 'spoon'] },
     }
 };
-const locAmsterdam = {
+var locAmsterdam = {
     city: "Amsterdam",
     address: "",
     coordinates: [
@@ -24,7 +24,7 @@ const locAmsterdam = {
         },
     ],
 };
-const commonPitches = [
+var commonPitches = [
     {
         name: 'Pitch 1',
         availability: { from: '2024-03-03T10:00:00', until: '2024-03-03T18:00:00' },
@@ -42,7 +42,7 @@ const commonPitches = [
         availability: { from: '2024-03-03T10:00:00', until: '2024-03-03T18:00:00' },
     }
 ];
-const testdata = {
+var testdata = {
     tournaments: {
         t1: {
             tournamentId: 6,
@@ -273,42 +273,45 @@ const testdata = {
     },
     fixtures: {
         f1: [
-            [
-                1,
-                "10:30",
-                "Pitch 5",
-                "group",
-                "Mens",
-                1,
-                "Amsterdam A",
-                "Leuven A",
-                "Groningen",
-                15,
-            ],
-            [
-                2,
-                "11:00",
-                "Pitch 5",
-                "group",
-                "Mens",
-                3,
-                "Belgium B",
-                "Leuven B",
-                "Leuven A",
-                20,
-            ],
-            [
-                3,
-                "11:30",
-                "Pitch 5",
-                "group",
-                "Mens",
-                1,
-                "Leuven A",
-                "Groningen",
-                "Belgium A",
-                15,
-            ],
+            {
+                matchId: 1,
+                scheduledTime: "10:30",
+                pitch: "Pitch 5",
+                stage: "group",
+                bracket: null,
+                category: "Mens",
+                position: 1,
+                team1: "Amsterdam A",
+                team2: "Leuven A",
+                umpireTeam: "Groningen",
+                duration: 15,
+            },
+            {
+                matchId: 2,
+                scheduledTime: "11:00",
+                pitch: "Pitch 5",
+                stage: "group",
+                bracket: null,
+                category: "Mens",
+                position: 3,
+                team1: "Belgium B",
+                team2: "Leuven B",
+                umpireTeam: "Leuven A",
+                duration: 20,
+            },
+            {
+                matchId: 3,
+                scheduledTime: "11:30",
+                pitch: "Pitch 5",
+                stage: "group",
+                bracket: null,
+                category: "Mens",
+                position: 1,
+                team1: "Leuven A",
+                team2: "Groningen",
+                umpireTeam: "Belgium A",
+                duration: 15,
+            },
         ],
         f2: [
             {
@@ -323,7 +326,6 @@ const testdata = {
                 },
                 category: "Mens",
                 bracket: null,
-                group: 1,
                 team1: {
                     type: 'predefined',
                     name: "Amsterdam A",

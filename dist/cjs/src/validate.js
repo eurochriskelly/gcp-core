@@ -1,9 +1,13 @@
-export const validateFixtures = (data, issues) => {
-    const valid = checkKeys(data, issues);
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.checkTeams = exports.checkPitches = exports.checkKeys = exports.validateFixtures = void 0;
+const validateFixtures = (data, issues) => {
+    const valid = (0, exports.checkKeys)(data, issues);
     return valid;
 };
+exports.validateFixtures = validateFixtures;
 // Checks
-export const checkKeys = (data, issues = []) => {
+const checkKeys = (data, issues = []) => {
     const keys = ['tournamentId', 'pitches', 'categories', 'activities'];
     const missingKeys = keys.filter((key) => !data[key]);
     if (missingKeys.length) {
@@ -11,7 +15,8 @@ export const checkKeys = (data, issues = []) => {
     }
     return !issues.length;
 };
-export const checkPitches = (data, issues = []) => {
+exports.checkKeys = checkKeys;
+const checkPitches = (data, issues = []) => {
     return data === null || data === void 0 ? void 0 : data.schedule.fixtures.every((fixture) => {
         const [, , pitch] = fixture;
         if (!data.pitches.includes(pitch)) {
@@ -21,7 +26,8 @@ export const checkPitches = (data, issues = []) => {
         return true;
     });
 };
-export const checkTeams = (data, issues = []) => {
+exports.checkPitches = checkPitches;
+const checkTeams = (data, issues = []) => {
     // for each fixture, check that the tema matches the name defined in categories
     return data === null || data === void 0 ? void 0 : data.schedule.fixtures.every((fixture) => {
         const [, , , , category, group, team1, team2, umpireTeam] = fixture;
@@ -47,3 +53,4 @@ export const checkTeams = (data, issues = []) => {
         return !issues.length;
     });
 };
+exports.checkTeams = checkTeams;

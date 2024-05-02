@@ -13,7 +13,6 @@ class TournamentSimulator {
             return p;
         }, {});
         console.table(this.teamList);
-        this.generateMatches();
         this.simulateMatches();
     }
     matchesTable(group) {
@@ -23,8 +22,7 @@ class TournamentSimulator {
     }
     simulateMatches() {
         console.log('Simulating matches...');
-        Object.keys(this.matches)
-            .forEach(group => {
+        Object.keys(this.matches).forEach(group => {
             console.log(`Group ${group}`);
             const matches = this.matches[group].map(match => {
                 const { team1, team2, offset } = match;

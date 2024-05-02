@@ -1,3 +1,6 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Fixture = exports.Break = void 0;
 class Activity {
     constructor(type) {
         this.ref = Activity.reference++;
@@ -17,7 +20,7 @@ class Activity {
     }
 }
 Activity.reference = 100;
-export class Break extends Activity {
+class Break extends Activity {
     constructor() {
         super('break');
         this.reasonCode = 0;
@@ -30,7 +33,8 @@ export class Break extends Activity {
         this.note = note;
     }
 }
-export class Fixture extends Activity {
+exports.Break = Break;
+class Fixture extends Activity {
     constructor(rowData) {
         super('fixture');
         this.matchId = 0;
@@ -95,3 +99,4 @@ export class Fixture extends Activity {
         });
     }
 }
+exports.Fixture = Fixture;
