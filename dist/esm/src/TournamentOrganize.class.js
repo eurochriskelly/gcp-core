@@ -32,7 +32,7 @@ class TournamentOrganize {
         // Assign teams to groups 
         const T = this.tournament;
         T.clearActivities();
-        const doAssignGroupFixtures = cat => {
+        const doAssignGroupFixtures = (cat) => {
             this.assignTeamsToGroups(cat, true);
             const fixtures = calculateGroupStageFixtures(cat, T.categories[cat].groups, [0, 0, 30, 25, 20, 20, 15]);
             T.fixturesAppend(fixtures);
@@ -41,7 +41,7 @@ class TournamentOrganize {
         categoryNames.forEach(doAssignGroupFixtures);
         this.orderGroupStageFixtures();
         // Generate knockout stage fixtures
-        const doAssignKnockoutFixtures = cat => {
+        const doAssignKnockoutFixtures = (cat) => {
             const knockoutFixtures = this.generateKnockoutFixtures(cat, T.groupSizes[cat]);
             T.fixturesAppend(knockoutFixtures);
             this.orderKnockoutStageFixtures(cat);
@@ -68,7 +68,7 @@ class TournamentOrganize {
         // For each non-group fixture, order by idealized order
         // In principle, all brackets can be played in parallel if there are pitches and refs available
         // So we can order by offset
-        T.bracketNames[cat].forEach(bracket => {
+        T.bracketNames[cat].forEach((bracket) => {
             let bracketOffset = 0;
             const bracketFixtures = catKnockoutFixtures.filter(f => f.bracket === bracket);
             const seenOrders = [...(new Set(bracketFixtures.map(f => f.order)))];
@@ -85,9 +85,10 @@ class TournamentOrganize {
         });
     }
     generateKnockoutFixtures(cat, groupSizes) {
+        var _a, _b, _c;
         const T = this.tournament;
         let matches = [];
-        const { brackets } = T.categories[cat].rules.elimination;
+        const brackets = (_c = (_b = (_a = T.categories[cat]) === null || _a === void 0 ? void 0 : _a.rules) === null || _b === void 0 ? void 0 : _b.elimination) === null || _c === void 0 ? void 0 : _c.brackets;
         const elimSlack = [30, 35, 40, 45];
         let bracketCursor = 0;
         const bracketNames = Object.keys(brackets);
@@ -97,7 +98,7 @@ class TournamentOrganize {
             const numTeams = brackets[bracket];
             const range = [bracketCursor, bracketCursor + numTeams - 1];
             bracketCursor += numTeams;
-            const enhance = match => {
+            const enhance = (match) => {
                 const [stage, group] = match.stage.split(':');
                 return Object.assign(Object.assign({ matchId: this.nextFixture++, offset: -1 }, match), { stage, group: group ? parseInt(group) : null, bracket, category: cat, numTeams });
             };

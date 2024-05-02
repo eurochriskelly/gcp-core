@@ -1,3 +1,5 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 class TournamentSimulator {
     constructor(stageParameters = []) {
         this.groupLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
@@ -13,7 +15,6 @@ class TournamentSimulator {
             return p;
         }, {});
         console.table(this.teamList);
-        this.generateMatches();
         this.simulateMatches();
     }
     matchesTable(group) {
@@ -23,8 +24,7 @@ class TournamentSimulator {
     }
     simulateMatches() {
         console.log('Simulating matches...');
-        Object.keys(this.matches)
-            .forEach(group => {
+        Object.keys(this.matches).forEach(group => {
             console.log(`Group ${group}`);
             const matches = this.matches[group].map(match => {
                 const { team1, team2, offset } = match;
@@ -44,4 +44,4 @@ class TournamentSimulator {
         });
     }
 }
-export default TournamentSimulator;
+exports.default = TournamentSimulator;

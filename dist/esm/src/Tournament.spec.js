@@ -1,7 +1,5 @@
-"use strict";
-const TEST_DATA = require('../test/test-data');
-const Tournament = require("./Tournament.class");
-const TournamentOrganize = require('./TournamentOrganize.class');
+import TEST_DATA from '../test/test-data';
+import Tournament from "./Tournament.class";
 const tournament_1 = TEST_DATA.tournaments["t1"];
 describe("Tournament", () => {
     it("can load a tournament and export as is", () => {

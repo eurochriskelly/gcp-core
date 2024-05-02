@@ -4,8 +4,8 @@ class Tournament {
         this.tournamentId = 0;
         this.description = "New tournament";
         this.startDate = new Date();
-        this.pitches = new Set();
-        this.categories = [];
+        this.pitches = [];
+        this.categories = {};
         this.activities = [];
         if (tdata) {
             this.load(tdata);
@@ -23,18 +23,16 @@ class Tournament {
         return this.categoryNames.map(name => ({ name, code: name.replace(/[^A-Z0-9]/g, "") }));
     }
     get bracketNames() {
-        // get bracket names for each category
         return this.categoryNames
-            .map(cat => [cat, Object.keys(this.categories[cat].rules.elimination.brackets)])
+            .map((cat) => [cat, Object.keys(this.categories[cat].rules.elimination.brackets)])
             .reduce((acc, [cat, brackets]) => {
             acc[cat] = brackets;
             return acc;
         }, {});
     }
     get groupSizes() {
-        // get group sizes for each category
         return this.categoryNames
-            .map(cat => [cat, this.categories[cat].groups.map(g => g.length)])
+            .map((cat) => [cat, this.categories[cat].groups.map(g => g.length)])
             .reduce((acc, [cat, sizes]) => {
             acc[cat] = sizes;
             return acc;
@@ -47,10 +45,11 @@ class Tournament {
         ];
     }
     addPitch(pitch) {
-        this.pitches.add(pitch);
+        this.pitches.push(pitch);
     }
     removePitch(pitch) {
-        this.pitches.delete(pitch);
+        // remove this pitch by name from the list 
+        this.pitches = this.pitches.filter(p => p.name !== pitch.name);
     }
     getTeams(category) {
         var _a;
@@ -61,18 +60,28 @@ class Tournament {
         return (_a = this.getTeams(category)) === null || _a === void 0 ? void 0 : _a.map((name, code) => ({ name, code }));
     }
     addCategory(category) {
-        this.categories[category] = {};
+        this.categories[category] = {
+            teams: [],
+            pitches: [],
+            rules: {
+                preliminary: {},
+                elimination: {
+                    brackets: {},
+                },
+            },
+            groups: [],
+        };
     }
-    addTeam(teamName, category, group = 0) {
+    addTeam(teamName, category) {
         // groups must be positive integers
-        this.assertCategory(category, this.categoryNames);
+        this.assertCategory(category);
         this.assertTeamIsNew(teamName, category);
         this.categories[category].teams.push(teamName);
     }
     swapTeams(team1, team2, category) {
         this.assertCategory(category);
-        this.assertTeam(team1, category);
-        this.assertTeam(team2, category);
+        this.assertTeamExists(team1, category);
+        this.assertTeamExists(team2, category);
         // Find which group team1 is in and replace with team2
         // Find which group team2 is in and replace with team1
         // Swap all instances of team1 with team2 in fixtures of this cateogry
@@ -81,29 +90,15 @@ class Tournament {
     clearActivities() {
         this.activities = [];
     }
-    addFixture(type, time, pitch, bracket, stage, category, group, letter1 = '', team1, letter2 = '', team2, umpireTeam, duration) {
-        this.activities.push([
-            type,
-            time,
-            pitch,
-            bracket,
-            stage,
-            category,
-            group,
-            letter1,
-            team1,
-            letter2,
-            team2,
-            umpireTeam,
-            duration,
-        ]);
+    addFixture(fix) {
+        this.activities.push(fix);
     }
     load(tdata) {
         const { tournamentId, description, startDate, pitches, categories, activities, } = tdata;
         this.tournamentId = tournamentId;
         this.description = description;
         this.startDate = startDate;
-        this.pitches = new Set(pitches);
+        this.pitches = pitches;
         this.categories = categories;
         this.activities = activities;
     }
