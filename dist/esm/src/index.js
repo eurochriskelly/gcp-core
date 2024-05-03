@@ -1,6 +1,7 @@
 // classes
-export * as Tournament from './Tournament.class';
-export * as TournamentOrganize from './TournamentOrganize.class';
+import TournamentDefault from './Tournament.class';
+export const Tournament = TournamentDefault;
+export { default as TournamentOrganize } from './TournamentOrganize.class';
 // libraries
 export * as validation from './validate';
 // test data

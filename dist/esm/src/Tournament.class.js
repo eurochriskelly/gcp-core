@@ -1,5 +1,5 @@
 import { Fixture } from './Activity.class';
-class Tournament {
+export default class Tournament {
     constructor(tdata) {
         this.tournamentId = 0;
         this.description = "New tournament";
@@ -150,4 +150,3 @@ class Tournament {
         }
     }
 }
-export default Tournament;

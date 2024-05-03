@@ -18,15 +18,7 @@
       "import": "./dist/esm/src/index.js",
       "require": "./dist/cjs/src/index.js"
     },
-    "./types": "./types/index.ts",
-    "./Tournament": {
-      "import": "./dist/esm/src/Tournament.class.js",
-      "require": "./dist/cjs/src/Tournament.class.js"
-    },
-    "./TournamentOrganize": {
-      "import": "./dist/esm/src/TournamentOrganize.class.js",
-      "require": "./dist/cjs/src/TournamentOrganize.class.js"
-    }
+    "./types": "./types/index.ts"
   },
   "keywords": [],
   "author": "",
