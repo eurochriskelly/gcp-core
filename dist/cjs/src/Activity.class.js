@@ -83,6 +83,8 @@ class Fixture extends Activity {
         this.score2 = { goals: null, points: null };
     }
     get repr() {
+        const { matchId, scheduledTime, pitch, category, bracket, time, position, team1, team2 } = this;
+        return `${matchId}|${scheduledTime}|${pitch}|${category}|${bracket}|${team1}|${team2}`;
         return JSON.stringify({
             matchId: this.matchId,
             scheduledTime: this.scheduledTime,

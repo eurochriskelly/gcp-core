@@ -1,5 +1,5 @@
 import { Fixture } from './Activity.class';
-class Tournament {
+export default class Tournament {
     constructor(tdata) {
         this.tournamentId = 0;
         this.description = "New tournament";
@@ -123,7 +123,7 @@ class Tournament {
     prettyPrintActivities(filter = () => true) {
         console.table(this.activities
             .filter(filter)
-            .map(a => a.repr));
+            .map(a => a.repr.split('|').map((x) => x == 'undefined' ? null : x)));
     }
     // ASSERTIONS
     assertCategory(cat) {
@@ -150,4 +150,3 @@ class Tournament {
         }
     }
 }
-export default Tournament;

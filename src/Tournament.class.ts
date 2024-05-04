@@ -1,7 +1,7 @@
 import { Fixture, Break } from './Activity.class';
 import { ITournament, IPitch, ICategory, IFixture, IFixProps } from '../types';
 
-class Tournament implements ITournament {
+export default class Tournament implements ITournament {
   tournamentId: number;
   description: string;
   startDate: Date;
@@ -149,7 +149,7 @@ class Tournament implements ITournament {
   prettyPrintActivities(filter = () => true) {
     console.table(this.activities
       .filter(filter)
-      .map(a => a.repr))
+      .map(a => a.repr.split('|').map((x:string) => x == 'undefined' ? null : x)))
   }
   // ASSERTIONS
   assertCategory(cat: string) {
@@ -183,4 +183,3 @@ class Tournament implements ITournament {
   }
 }
 
-export default Tournament;

@@ -22,11 +22,16 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.testdata = exports.validation = exports.TournamentOrganize = exports.Tournament = void 0;
 // classes
-exports.Tournament = __importStar(require("./Tournament.class"));
-exports.TournamentOrganize = __importStar(require("./TournamentOrganize.class"));
+const Tournament_class_1 = __importDefault(require("./Tournament.class"));
+const TournamentOrganize_class_1 = __importDefault(require("./TournamentOrganize.class"));
+exports.Tournament = Tournament_class_1.default;
+exports.TournamentOrganize = TournamentOrganize_class_1.default;
 // libraries
 exports.validation = __importStar(require("./validate"));
 // test data
