@@ -149,7 +149,7 @@ export default class Tournament implements ITournament {
   prettyPrintActivities(filter = () => true) {
     console.table(this.activities
       .filter(filter)
-      .map(a => a.repr))
+      .map(a => a.repr.split('|').map((x:string) => x == 'undefined' ? null : x)))
   }
   // ASSERTIONS
   assertCategory(cat: string) {

@@ -123,7 +123,7 @@ export default class Tournament {
     prettyPrintActivities(filter = () => true) {
         console.table(this.activities
             .filter(filter)
-            .map(a => a.repr));
+            .map(a => a.repr.split('|').map((x) => x == 'undefined' ? null : x)));
     }
     // ASSERTIONS
     assertCategory(cat) {

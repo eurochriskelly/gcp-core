@@ -29,9 +29,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.testdata = exports.validation = exports.TournamentOrganize = exports.Tournament = void 0;
 // classes
 const Tournament_class_1 = __importDefault(require("./Tournament.class"));
+const TournamentOrganize_class_1 = __importDefault(require("./TournamentOrganize.class"));
 exports.Tournament = Tournament_class_1.default;
-var TournamentOrganize_class_1 = require("./TournamentOrganize.class");
-Object.defineProperty(exports, "TournamentOrganize", { enumerable: true, get: function () { return __importDefault(TournamentOrganize_class_1).default; } });
+exports.TournamentOrganize = TournamentOrganize_class_1.default;
 // libraries
 exports.validation = __importStar(require("./validate"));
 // test data

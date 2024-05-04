@@ -131,6 +131,9 @@ export class Fixture extends Activity implements IFixture {
   }
 
   get repr(): string {
+    const { matchId, scheduledTime, pitch, category, bracket, time, position, team1, team2} = this
+
+    return `${matchId}|${scheduledTime}|${pitch}|${category}|${bracket}|${team1}|${team2}`
     return JSON.stringify({
       matchId: this.matchId,
       scheduledTime: this.scheduledTime,
