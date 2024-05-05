@@ -37,9 +37,9 @@ class PitchAllocator {
             const pitch = this.nextAvailablePitch();
             match.pitch = pitch.name;
             match.scheduledTime = pitch.nextAvailableSlot;
-            const time = pitch.nextAvailableSlot
-                .split('T').pop().substring(0, 5);
-            const nextSlot = `${this.tournament.startDate}T${addMinutes(time, (_a = match === null || match === void 0 ? void 0 : match.time) === null || _a === void 0 ? void 0 : _a.allotted)}:00`;
+            const time = pitch.nextAvailableSlot.split('T').pop().substring(0, 5);
+            const starttime = addMinutes(time, ((_a = match === null || match === void 0 ? void 0 : match.time) === null || _a === void 0 ? void 0 : _a.allotted) || 30);
+            const nextSlot = `${this.tournament.startDate}T${starttime}:00`;
             pitch.nextAvailableSlot = nextSlot;
         });
     }
