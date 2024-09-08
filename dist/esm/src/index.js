@@ -6,5 +6,4 @@ export const TournamentOrganize = TournamentOrganizeDefault;
 // libraries
 export * as validation from './validate';
 // test data
-import TestdataDefault from '../test/test-data';
-export const testdata = TestdataDefault;
+export * as testdata from '../test/test-data';

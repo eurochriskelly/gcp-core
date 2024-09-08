@@ -50,9 +50,9 @@ class PitchAllocator {
                 const pitch = this.nextAvailablePitch()
                 match.pitch = pitch.name
                 match.scheduledTime = pitch.nextAvailableSlot
-                const time = pitch.nextAvailableSlot
-                    .split('T').pop().substring(0, 5)
-                const nextSlot = `${this.tournament.startDate}T${addMinutes(time, match?.time?.allotted)}:00`
+                const time = pitch.nextAvailableSlot.split('T').pop().substring(0, 5)
+                const starttime = addMinutes(time, match?.time?.allotted||30);
+                const nextSlot = `${this.tournament.startDate}T${starttime}:00`;
                 pitch.nextAvailableSlot = nextSlot
             })
     };
